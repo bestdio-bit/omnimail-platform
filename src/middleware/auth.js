@@ -45,12 +45,7 @@ async function authenticateKey(req, res, next) {
     `).get(token);
 
     if (sessionRecord && sessionRecord.expires_at > now) {
-      if (sessionRecord.is_verified === 0) {
-        return res.status(403).json({
-          error: 'email_not_verified',
-          message: 'Email verification is required before accessing the dashboard.'
-        });
-      }
+      // Email verification check removed
 
       req.auth = {
         key_id: 'session_' + sessionRecord.session_id,
