@@ -326,8 +326,8 @@ async function initDb() {
       const now = Date.now();
       const defaultOrgId = 'org_demo_omnimail_001';
       await sql.unsafe(`
-        INSERT INTO orgs (id, name, plan_tier, custom_send_volume, dedicated_ip, created_at)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO orgs (id, name, plan_tier, custom_send_volume, dedicated_ip, onboarding_step, created_at)
+        VALUES ($1, $2, $3, $4, $5, 'completed', $6)
       `, [defaultOrgId, 'OmniMail Enterprise Demo', 'enterprise', 1000000, '198.51.100.42', now]);
 
       const demoPasswordHash = crypto.scryptSync('admin123', 'omni_salt_demo', 64).toString('hex');
@@ -343,6 +343,9 @@ async function initDb() {
       
       console.log('✅ [DB] Initialized Demo Org and Master Key: omni_live_master_key_9988776655');
     }
+
+    // Force demo org to bypass onboarding if it already exists but was stuck
+    await sql.unsafe(`UPDATE orgs SET onboarding_step = 'completed' WHERE id = 'org_demo_omnimail_001'`);
   } catch (err) {
     console.error('❌ [DB Init Error]:', err);
   }
