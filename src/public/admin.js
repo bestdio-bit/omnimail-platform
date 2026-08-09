@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('omni_token');
+  const token = localStorage.getItem('omni_session_token');
   if (!token) {
     window.location.href = '/login';
     return;
