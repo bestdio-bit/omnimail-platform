@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniMail — Next-Gen Enterprise Email & Marketing Platform</title>
+  <meta name="description" content="Self-hosted, enterprise-grade email sending infrastructure, collaborative marketing templates, visual automations, and universal checkout. Zero third-party vendor brand leakage.">
+  <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>OmniMail</h1>
+        <span>Enterprise v1.0</span>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <div class="nav-item active" onclick="switchTab('overview')">
+        <span class="nav-icon">📊</span>
+        <span>Overview & Analytics</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('send')">
+        <span class="nav-icon">🚀</span>
+        <span>Live Send Demo</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('domains')">
+        <span class="nav-icon">🛡️</span>
+        <span>Domain Auth & DNS</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('templates')">
+        <span class="nav-icon">🎨</span>
+        <span>Template Studio</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('campaigns')">
+        <span class="nav-icon">📢</span>
+        <span>Campaigns & Drafts</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('automations')">
+        <span class="nav-icon">⚡</span>
+        <span>Visual Automations</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('contacts')">
+        <span class="nav-icon">👥</span>
+        <span>Audience & Suppressions</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('keys')">
+        <span class="nav-icon">🔑</span>
+        <span>Team & RBAC Keys</span>
+      </div>
+      <div class="nav-item" onclick="switchTab('billing')">
+        <span class="nav-icon">💎</span>
+        <span>Pricing & Billing</span>
+      </div>
+      
+      <!-- Hidden Admin Panel Button (Revealed only to Super Admin) -->
+      <div class="nav-item" id="admin-nav-item" style="display: none; margin-top: 20px; border: 1px solid var(--primary); background: rgba(99,102,241,0.05);" onclick="window.location.href='/admin'">
+        <span class="nav-icon" style="color: var(--primary);">👑</span>
+        <span style="color: var(--primary); font-weight: 600;">Master Admin</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span id="gateway-status-text">Cloud Gateway Operational</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Workspace -->
+  <main class="main-wrapper">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="header-title">
+        <h2 id="page-title">Overview & Analytics</h2>
+      </div>
+      <div class="header-meta">
+        <div class="meta-chip">
+          <span>Reputation:</span>
+          <strong style="color: var(--success);">99.5%</strong>
+        </div>
+        <div class="meta-chip">
+          <span>Queue Depth:</span>
+          <strong id="header-queue-depth">0</strong>
+        </div>
+        <div class="meta-chip" style="background: rgba(99,102,241,0.1); border-color: rgba(99,102,241,0.3);">
+          <span>Plan:</span>
+          <strong id="header-plan-tier" style="color: var(--primary); text-transform: uppercase;">FREE</strong>
+        </div>
+        <div class="meta-chip" style="cursor: pointer; background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3);" onclick="logoutUser()">
+          <span id="header-user-email">admin@omnimail.local</span>
+          <strong style="color: var(--danger); margin-left: 6px;">[Logout]</strong>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dynamic Content Area -->
+    <div class="content-area" id="content-container">
+      <!-- Tabs will be rendered dynamically via app.js -->
+    </div>
+  </main>
+
+  <!-- Modal Overlay for Token Display & Simulations -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal-content" id="modal-body"></div>
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

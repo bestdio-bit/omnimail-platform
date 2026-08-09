@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniMail — Next-Generation Enterprise Email & Marketing Platform</title>
+  <meta name="description" content="Self-hosted, enterprise-grade email sending infrastructure, collaborative marketing templates, visual automations, and universal checkout. Zero third-party vendor brand leakage.">
+  <link rel="stylesheet" href="/index.css">
+</head>
+<body class="marketing-body">
+
+  <!-- Sticky Glassmorphism Navbar -->
+  <nav class="navbar">
+    <div class="brand" style="border-bottom: none; padding: 0;">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <h1>OmniMail</h1>
+        <span>Enterprise v1.0</span>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#docs">Docs & Legal</a>
+      <a href="#blog">Blog & Changelog</a>
+      <a href="#contact">Contact Support</a>
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <a href="/login" class="btn btn-secondary" style="padding: 10px 20px; font-size: 14px; text-decoration: none;">Log In</a>
+      <a href="/signup" class="btn btn-primary" style="padding: 10px 20px; font-size: 14px; text-decoration: none;">Start Free Trial →</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero-section">
+    <div style="display: inline-block; padding: 6px 16px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); border-radius: 30px; color: #818cf8; font-size: 13px; font-weight: 600; margin-bottom: 24px;">
+      ⚡ Next-Generation Enterprise Email Infrastructure v1.0
+    </div>
+    <h1 class="hero-title">The Self-Hosted Email Platform Built for Extreme Scale.</h1>
+    <p class="hero-subtitle">
+      Cloud Delivery Gateway relaying, collaborative marketing templates, visual DAG automations, and universal server-to-server checkout without leaking any third-party vendor brand names.
+    </p>
+    <div class="hero-cta">
+      <a href="/signup" class="btn btn-primary" style="padding: 14px 32px; font-size: 16px; text-decoration: none; box-shadow: 0 0 25px var(--primary-glow);">Start Free Trial →</a>
+      <a href="/app" class="btn btn-secondary" style="padding: 14px 32px; font-size: 16px; text-decoration: none;">Explore Live Dashboard</a>
+    </div>
+
+    <!-- Terminal Preview -->
+    <div style="max-width: 650px; margin: 0 auto; background: #0e1017; border: 1px solid #252940; border-radius: 12px; padding: 20px; text-align: left; font-family: 'Fira Code', monospace; font-size: 13px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+      <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 1px solid #1f2335; padding-bottom: 12px;">
+        <span style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></span>
+        <span style="width: 12px; height: 12px; border-radius: 50%; background: #f59e0b;"></span>
+        <span style="width: 12px; height: 12px; border-radius: 50%; background: #10b981;"></span>
+        <span style="color: #64748b; margin-left: auto;">omnimail-gateway-relay</span>
+      </div>
+      <div style="color: #38bdf8;">POST /api/send HTTP/1.1</div>
+      <div style="color: #a0a8c0;">Authorization: Bearer omni_live_master_key_9988776655</div>
+      <div style="color: #a0a8c0;">Content-Type: application/json</div>
+      <pre style="color: #e2e8f0; margin: 12px 0 0;">{
+  "to": "executive@enterprise-client.com",
+  "template_id": "tpl_welcome_onboarding",
+  "variables": { "FIRST_NAME": "Alex", "ROLE": "VP of Engineering" }
+}</pre>
+      <div style="color: #10b981; margin-top: 12px;">HTTP/1.1 200 OK — Queued in 0.38ms (SQLite WAL Engine)</div>
+    </div>
+  </header>
+
+  <!-- Features Overview Grid -->
+  <section id="features" class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">Engineered for Reliability & Zero Brand Leakage</h2>
+      <p class="section-subtitle">Every feature is designed from scratch in Node.js and SQLite to give you total infrastructure ownership.</p>
+    </div>
+    <div class="grid-4" style="gap: 24px;">
+      <div class="card stat-card" style="padding: 28px;">
+        <div style="font-size: 32px; margin-bottom: 16px;">🛡️</div>
+        <h3 style="color: white; font-size: 18px; margin-bottom: 8px;">Cloud Delivery Gateway</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">Vendor-agnostic SMTP and HTTP REST relay wrapper with automatic failover and zero third-party brand leakage in code or logs.</p>
+      </div>
+      <div class="card stat-card" style="padding: 28px;">
+        <div style="font-size: 32px; margin-bottom: 16px;">🎨</div>
+        <h3 style="color: white; font-size: 18px; margin-bottom: 8px;">Collaborative Campaigns</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">Real-time co-editing presence heartbeats, draft vs. published versioning, and drag-and-drop studio blocks.</p>
+      </div>
+      <div class="card stat-card" style="padding: 28px;">
+        <div style="font-size: 32px; margin-bottom: 16px;">⚡</div>
+        <h3 style="color: white; font-size: 18px; margin-bottom: 8px;">Visual Automations Engine</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">Build Directed Acyclic Graph (DAG) workflows with Trigger, Delay, Condition, and Send nodes. Simulate runs without sending live email.</p>
+      </div>
+      <div class="card stat-card" style="padding: 28px;">
+        <div style="font-size: 32px; margin-bottom: 16px;">📊</div>
+        <h3 style="color: white; font-size: 18px; margin-bottom: 8px;">Real-Time Telemetry</h3>
+        <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">Inbound webhook processing for opens, clicks, bounces, and complaints with automatic suppression list management.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing & Plan Comparison Table -->
+  <section id="pricing" class="section-container" style="background: rgba(20,23,36,0.4); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); max-width: 100%;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <div class="section-header">
+        <h2 class="section-title">Transparent Pricing Without Add-On Taxes</h2>
+        <p class="section-subtitle">Dedicated IPs and Enterprise SAML SSO are included FREE in top tiers without extra fees!</p>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 24px;">
+          <span style="color: var(--text-secondary); font-weight: 600;">Monthly Billing</span>
+          <span style="background: var(--primary); color: white; font-size: 11px; padding: 4px 10px; border-radius: 20px; font-weight: 700;">Save 20% on Annual</span>
+        </div>
+      </div>
+
+      <div class="grid-4" style="gap: 24px;">
+        <!-- Free -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-size: 14px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase;">Free Tier</div>
+            <div style="font-size: 36px; font-weight: 800; color: white; margin: 12px 0;">$0<span style="font-size: 16px; color: var(--text-secondary); font-weight: 400;">/mo</span></div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">Perfect for developers testing local integration.</p>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 20px;" />
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-primary);">
+              <li>✓ <strong>5,000</strong> emails/month</li>
+              <li>✓ <strong>No daily cap!</strong></li>
+              <li>✓ RBAC Scoped API Keys</li>
+              <li>✓ Core Send & Batch API</li>
+              <li>✓ Community Support</li>
+            </ul>
+          </div>
+          <a href="/signup?plan=free" class="btn btn-secondary" style="width: 100%; text-align: center; margin-top: 28px; text-decoration: none;">Get Started Free</a>
+        </div>
+
+        <!-- Entry -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-size: 14px; color: var(--primary); font-weight: 600; text-transform: uppercase;">Entry Paid</div>
+            <div style="font-size: 36px; font-weight: 800; color: white; margin: 12px 0;">$7<span style="font-size: 16px; color: var(--text-secondary); font-weight: 400;">/mo</span></div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">For growing startups and indie newsletters.</p>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 20px;" />
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-primary);">
+              <li>✓ <strong>10,000</strong> emails/month</li>
+              <li>✓ <strong>No daily cap!</strong></li>
+              <li>✓ All Free Tier features</li>
+              <li>✓ Email Support</li>
+              <li>✓ Custom Sending Domains</li>
+            </ul>
+          </div>
+          <a href="/signup?plan=entry" class="btn btn-primary" style="width: 100%; text-align: center; margin-top: 28px; text-decoration: none;">Start 14-Day Trial</a>
+        </div>
+
+        <!-- Pro -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border: 2px solid var(--primary); box-shadow: 0 0 30px var(--primary-glow); position: relative;">
+          <div style="position: absolute; top: -12px; right: 20px; background: var(--primary); color: white; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 12px; text-transform: uppercase;">Most Popular</div>
+          <div>
+            <div style="font-size: 14px; color: var(--accent-pink); font-weight: 600; text-transform: uppercase;">Mid Tier (Pro)</div>
+            <div style="font-size: 36px; font-weight: 800; color: white; margin: 12px 0;">$49<span style="font-size: 16px; color: var(--text-secondary); font-weight: 400;">/mo</span></div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">For high-volume marketing & automation teams.</p>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 20px;" />
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-primary);">
+              <li>✓ <strong>100,000</strong> emails/month</li>
+              <li><strong style="color: var(--success);">★ Included FREE Dedicated IP!</strong></li>
+              <li>✓ Visual Automations Engine</li>
+              <li>✓ Collaborative Template Studio</li>
+              <li>✓ Priority Support</li>
+            </ul>
+          </div>
+          <a href="/signup?plan=mid" class="btn btn-primary" style="width: 100%; text-align: center; margin-top: 28px; text-decoration: none; background: linear-gradient(135deg, var(--primary), var(--accent-pink));">Upgrade to Pro</a>
+        </div>
+
+        <!-- Enterprise -->
+        <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <div style="font-size: 14px; color: #38bdf8; font-weight: 600; text-transform: uppercase;">Enterprise</div>
+            <div style="font-size: 36px; font-weight: 800; color: white; margin: 12px 0;">Custom</div>
+            <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">For large-scale organizations requiring SLAs.</p>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 20px;" />
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: var(--text-primary);">
+              <li>✓ <strong>Custom Volume</strong> (1M+ /mo)</li>
+              <li><strong style="color: var(--success);">★ Included FREE SAML SSO!</strong></li>
+              <li>✓ Multiple Dedicated IPs</li>
+              <li>✓ Dedicated Account Manager</li>
+              <li>✓ 99.99% Uptime SLA Guarantee</li>
+            </ul>
+          </div>
+          <a href="#contact" class="btn btn-secondary" style="width: 100%; text-align: center; margin-top: 28px; text-decoration: none;">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Docs & Legal Section -->
+  <section id="docs" class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">Documentation & Legal Compliance</h2>
+      <p class="section-subtitle">Complete transparency on data privacy, terms, refunds, cookies, and API SLAs.</p>
+    </div>
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="display: flex; border-bottom: 1px solid var(--border-color); background: #0e1017; overflow-x: auto;">
+        <button class="doc-tab active" onclick="showDoc('privacy')" style="padding: 16px 24px; background: transparent; border: none; color: white; font-weight: 600; cursor: pointer; border-bottom: 2px solid var(--primary);">Privacy Policy</button>
+        <button class="doc-tab" onclick="showDoc('terms')" style="padding: 16px 24px; background: transparent; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer;">Terms & Conditions</button>
+        <button class="doc-tab" onclick="showDoc('refund')" style="padding: 16px 24px; background: transparent; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer;">Refund Policy</button>
+        <button class="doc-tab" onclick="showDoc('cookie')" style="padding: 16px 24px; background: transparent; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer;">Cookie Policy</button>
+        <button class="doc-tab" onclick="showDoc('sla')" style="padding: 16px 24px; background: transparent; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer;">SLA Guarantee</button>
+        <button class="doc-tab" onclick="showDoc('api')" style="padding: 16px 24px; background: transparent; border: none; color: var(--text-secondary); font-weight: 600; cursor: pointer;">API Reference</button>
+      </div>
+      <div id="doc-content" style="padding: 40px; line-height: 1.8; color: var(--text-secondary); font-size: 15px;">
+        <h3 style="color: white; margin-bottom: 16px;">1. Privacy & Data Protection Policy</h3>
+        <p>OmniMail processes email recipient data strictly on behalf of our enterprise customers. We never sell, monetize, or share recipient email lists, contact attributes, or telemetry data with third-party advertising networks.</p>
+        <p style="margin-top: 12px;">All data is encrypted at rest within our SQLite WAL engine and transmitted securely over TLS 1.3. Customers retain full ownership and right of deletion over all audience data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog & Changelog Section -->
+  <section id="blog" class="section-container">
+    <div class="section-header">
+      <h2 class="section-title">Engineering Blog & Changelog</h2>
+      <p class="section-subtitle">Deep dives into high-throughput email infrastructure and platform updates.</p>
+    </div>
+    <div class="grid-3" style="gap: 24px;">
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <span style="font-size: 12px; color: var(--primary); font-weight: 700; text-transform: uppercase;">Engineering Architecture</span>
+          <h3 style="color: white; font-size: 18px; margin: 12px 0;">Why We Built a Zero Brand Leakage Cloud Gateway</h3>
+          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">How abstracting SMTP and REST providers protects your brand identity and prevents vendor lock-in across enterprise client deployments.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 12px; margin-top: 20px;">July 7, 2026 • 6 min read</span>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <span style="font-size: 12px; color: var(--accent-cyan); font-weight: 700; text-transform: uppercase;">Database Performance</span>
+          <h3 style="color: white; font-size: 18px; margin: 12px 0;">Scaling SQLite WAL Mode to 10,000 Emails/Sec</h3>
+          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">Discover our composite indexing strategy, normal synchronous pragmas, and memory caching that enable sub-millisecond query performance.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 12px; margin-top: 20px;">July 5, 2026 • 8 min read</span>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <span style="font-size: 12px; color: var(--success); font-weight: 700; text-transform: uppercase;">Changelog Release</span>
+          <h3 style="color: white; font-size: 18px; margin: 12px 0;">v1.0 Released: Visual DAG Automations & Checkout</h3>
+          <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">We are thrilled to launch OmniMail v1.0 featuring our drag-and-drop template studio, visual workflow builder, and universal server-to-server checkout.</p>
+        </div>
+        <span style="color: var(--text-muted); font-size: 12px; margin-top: 20px;">July 1, 2026 • Release Notes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Support Section -->
+  <section id="contact" class="section-container" style="max-width: 700px;">
+    <div class="section-header">
+      <h2 class="section-title">Get in Touch with Our Support Team</h2>
+      <p class="section-subtitle">Have custom volume requirements or technical questions? We're here to help 24/7.</p>
+    </div>
+    <div class="card" style="padding: 36px;">
+      <form id="contact-form" onsubmit="handleContactSubmit(event)">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label class="form-label">Your Name</label>
+            <input type="text" class="form-input" required placeholder="Alex Smith" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" required placeholder="alex@enterprise.com" />
+          </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">Subject</label>
+          <select class="form-input">
+            <option>Enterprise Custom Volume Inquiry</option>
+            <option>SAML SSO & Dedicated IP Setup</option>
+            <option>Technical Delivery & DNS Drift Question</option>
+            <option>General Billing Support</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+          <label class="form-label">Message</label>
+          <textarea class="form-input" rows="4" required placeholder="Tell us about your sending volume and requirements..."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; padding: 14px; font-size: 16px;">Send Inquiry →</button>
+        <div id="contact-status" style="margin-top: 16px; text-align: center; font-weight: 600;"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer style="border-top: 1px solid var(--border-color); padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 14px;">
+    <p>Copyright © 2026 OmniMail Inc. All rights reserved. Zero Vendor Brand Leakage Enterprise Infrastructure.</p>
+  </footer>
+
+  <script>
+    const docsData = {
+      privacy: `<h3 style="color: white; margin-bottom: 16px;">1. Privacy & Data Protection Policy</h3>
+        <p>OmniMail processes email recipient data strictly on behalf of our enterprise customers. We never sell, monetize, or share recipient email lists, contact attributes, or telemetry data with third-party advertising networks.</p>
+        <p style="margin-top: 12px;">All data is encrypted at rest within our SQLite WAL engine and transmitted securely over TLS 1.3. Customers retain full ownership and right of deletion over all audience data.</p>`,
+      terms: `<h3 style="color: white; margin-bottom: 16px;">2. Terms & Conditions of Service</h3>
+        <p>By accessing or using OmniMail infrastructure, you agree to comply with global anti-spam laws including CAN-SPAM, GDPR, and CASL. Sending unsolicited bulk spam, phishing, or malware is strictly prohibited and results in immediate account suspension without refund.</p>`,
+      refund: `<h3 style="color: white; margin-bottom: 16px;">3. 30-Day Money-Back Guarantee Refund Policy</h3>
+        <p>We stand firmly behind our high-performance infrastructure. If you are not 100% satisfied with your paid subscription tier (Entry, Pro, or Enterprise), you may request a full refund within 30 days of initial purchase—no questions asked.</p>`,
+      cookie: `<h3 style="color: white; margin-bottom: 16px;">4. Essential Cookie Policy</h3>
+        <p>OmniMail uses strictly essential session cookies (<code>omni_session</code>) to maintain secure user authentication in the dashboard. We do not deploy advertising tracking cookies or third-party retargeting pixels.</p>`,
+      sla: `<h3 style="color: white; margin-bottom: 16px;">5. 99.99% Service Level Agreement (SLA) Guarantee</h3>
+        <p>Our Cloud Delivery Gateway and SQLite WAL cluster are architected for high availability. We guarantee 99.99% monthly uptime for all Pro and Enterprise customers. In the rare event of downtime exceeding 4.3 minutes in a month, service credit reimbursements are automatically applied to your next invoice.</p>`,
+      api: `<h3 style="color: white; margin-bottom: 16px;">6. API Reference Quickstart</h3>
+        <p>Authenticate programmatic requests using your RBAC Scoped API Key in the Authorization header: <code>Authorization: Bearer omni_live_...</code></p>
+        <pre style="background: #0b0d14; padding: 16px; border-radius: 8px; margin-top: 12px; color: #38bdf8;">POST /api/send\nContent-Type: application/json\n\n{\n  "to": "recipient@example.com",\n  "subject": "Hello from OmniMail",\n  "html_body": "&lt;h1&gt;Welcome!&lt;/h1&gt;"\n}</pre>`
+    };
+
+    function showDoc(tabKey) {
+      document.querySelectorAll('.doc-tab').forEach(btn => {
+        btn.classList.remove('active');
+        btn.style.color = 'var(--text-secondary)';
+        btn.style.borderBottom = 'none';
+      });
+      event.target.classList.add('active');
+      event.target.style.color = 'white';
+      event.target.style.borderBottom = '2px solid var(--primary)';
+      document.getElementById('doc-content').innerHTML = docsData[tabKey] || docsData.privacy;
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const statusEl = document.getElementById('contact-status');
+      statusEl.style.color = 'var(--success)';
+      statusEl.innerText = '✓ Thank you! Your support ticket has been received. Our team will respond within 15 minutes.';
+      e.target.reset();
+    }
+  </script>
+</body>
+</html>
