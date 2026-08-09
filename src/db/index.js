@@ -322,27 +322,42 @@ async function initDb() {
 
     // 2. Demo Org check
     const orgCount = await sql.unsafe('SELECT COUNT(*) as count FROM orgs');
+    
+    // Secure Master Admin Credentials
+    const adminEmail = (process.env.ADMIN_EMAIL || 'admin@omnimail.local').toLowerCase().trim();
+    const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
+    // Use dynamic salt based on the email to match auth.js logic
+    const adminSalt = (adminEmail === 'admin@omnimail.local') ? 'omni_salt_demo' : ('omni_salt_' + adminEmail);
+    const adminPasswordHash = crypto.scryptSync(adminPassword, adminSalt, 64).toString('hex');
+    const defaultOrgId = 'org_demo_omnimail_001';
+
     if (parseInt(orgCount[0].count) === 0) {
       const now = Date.now();
-      const defaultOrgId = 'org_demo_omnimail_001';
       await sql.unsafe(`
         INSERT INTO orgs (id, name, plan_tier, custom_send_volume, dedicated_ip, onboarding_step, created_at)
         VALUES ($1, $2, $3, $4, $5, 'completed', $6)
       `, [defaultOrgId, 'OmniMail Enterprise Demo', 'enterprise', 1000000, '198.51.100.42', now]);
 
-      const demoPasswordHash = crypto.scryptSync('admin123', 'omni_salt_demo', 64).toString('hex');
       await sql.unsafe(`
         INSERT INTO users (id, org_id, email, name, role, password_hash, is_verified, created_at)
         VALUES ($1, $2, $3, $4, $5, $6, 1, $7)
-      `, ['usr_demo_owner_001', defaultOrgId, 'admin@omnimail.local', 'Demo Admin', 'owner', demoPasswordHash, now]);
+      `, ['usr_demo_owner_001', defaultOrgId, adminEmail, 'Master Admin', 'owner', adminPasswordHash, now]);
 
       await sql.unsafe(`
         INSERT INTO api_keys (id, org_id, name, key_hash, key_prefix, role, created_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
       `, ['key_demo_master_001', defaultOrgId, 'Master Demo Key', 'omni_live_master_key_9988776655', 'omni_live_', 'owner', now]);
       
-      console.log('✅ [DB] Initialized Demo Org and Master Key: omni_live_master_key_9988776655');
+      console.log('✅ [DB] Initialized Demo Org and Master Key');
     }
+
+    // Forcefully update the existing master admin account on every boot 
+    // to ensure the user can securely override the default credentials via Render ENV vars
+    await sql.unsafe(`
+      UPDATE users 
+      SET email = $1, password_hash = $2 
+      WHERE id = 'usr_demo_owner_001'
+    `, [adminEmail, adminPasswordHash]);
 
     // Force demo org to bypass onboarding if it already exists but was stuck
     await sql.unsafe(`UPDATE orgs SET onboarding_step = 'completed' WHERE id = 'org_demo_omnimail_001'`);
