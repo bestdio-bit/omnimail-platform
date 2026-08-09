@@ -186,7 +186,7 @@ async function processAutomations() {
         if (contact && templateId) {
           // Enqueue email
           const emailId = 'em_auto_' + now + '_' + Math.random().toString(36).substring(2, 6);
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO emails (id, org_id, template_id, to_address, from_address, subject, html_body, text_body, status, queued_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'queued', ?)
           `).run(emailId, automation.org_id, templateId, contact.email, process.env.SMTP_FROM_DEFAULT || 'notifications@omnimail.local', 'Automated Workflow Email', '', '', now);
@@ -246,7 +246,7 @@ async function processDailyMaintenance() {
   const orgsWithIp = await db.prepare("SELECT dedicated_ip FROM orgs WHERE dedicated_ip IS NOT NULL").all();
   for (const org of orgsWithIp) {
     const chkId = 'chk_' + now + '_' + Math.random().toString(36).substring(2, 6);
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO blocklist_checks (id, target, blocklist_name, status, checked_at)
       VALUES (?, ?, ?, 'clean', ?)
     `).run(chkId, org.dedicated_ip, 'Global Reputation Network Alpha', now);

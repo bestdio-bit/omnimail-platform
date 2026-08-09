@@ -291,13 +291,15 @@ async function initDb() {
         created_at BIGINT
       );
 
+      DROP TABLE IF EXISTS domain_dns_snapshots;
       CREATE TABLE IF NOT EXISTS domain_dns_snapshots (
-        domain_id TEXT PRIMARY KEY,
+        id TEXT PRIMARY KEY,
+        domain_id TEXT,
         spf_record TEXT,
         dkim_record TEXT,
         dmarc_record TEXT,
         bimi_record TEXT,
-        snapshotted_at BIGINT
+        checked_at BIGINT
       );
 
       CREATE TABLE IF NOT EXISTS clicks (
