@@ -57,10 +57,10 @@ router.post('/signup', async (req, res) => {
       VALUES (?, ?, 'free', 'plan_selection', 'monthly', 5000, ?)
     `).run(orgId, organizationName, now);
 
-    // Create Owner User (Unverified initially!)
+    // Create Owner User (Verified initially!)
     await db.prepare(`
       INSERT INTO users (id, org_id, email, name, role, password_hash, is_verified, verification_token, created_at)
-      VALUES (?, ?, ?, ?, 'owner', ?, 0, ?, ?)
+      VALUES (?, ?, ?, ?, 'owner', ?, 1, ?, ?)
     `).run(userId, orgId, cleanEmail, name, passwordHash, verificationOtp, now);
 
     // Create Default Scoped API Key
@@ -73,15 +73,23 @@ router.post('/signup', async (req, res) => {
 
   logAudit(orgId, userId, 'user_signed_up', 'user', userId, { email: cleanEmail });
 
+  // Generate session immediately for the new user
+  const sessionId = 'ses_' + now + '_' + Math.random().toString(36).substring(2, 6);
+  const sessionToken = 'tok_session_' + crypto.randomBytes(32).toString('hex');
+  const expiresAt = now + 30 * 24 * 60 * 60 * 1000;
+
+  await db.prepare(`
+    INSERT INTO sessions (id, user_id, org_id, token, expires_at, created_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(sessionId, userId, orgId, sessionToken, expiresAt, now);
+
   res.status(201).json({
     success: true,
-    message: 'Account created successfully! Please verify your email address to continue.',
+    message: 'Account created successfully!',
+    token: sessionToken,
     data: {
-      user_id: userId,
-      email: cleanEmail,
-      org_id: orgId,
-      verification_otp: verificationOtp, // Returned in demo/evaluation mode for instant verification!
-      verification_url: `/verify?email=${encodeURIComponent(cleanEmail)}&otp=${verificationOtp}`
+      user: { id: userId, email: cleanEmail, name: name, role: 'owner', is_verified: 1 },
+      org: { id: orgId, name: organizationName, plan_tier: 'free', onboarding_step: 'plan_selection' }
     }
   });
 });
@@ -153,7 +161,8 @@ router.post('/login', async (req, res) => {
     return res.status(401).json({ success: false, error: 'invalid_credentials', message: 'Invalid email or password.' });
   }
 
-  // Enforce Email Verification Before Dashboard Access!
+  // Verification no longer enforced for dashboard access
+  /*
   if (user.is_verified === 0) {
     return res.status(403).json({
       success: false,
@@ -163,6 +172,7 @@ router.post('/login', async (req, res) => {
       message: 'Email verification is required before accessing the dashboard. Please check your inbox or verify your OTP.'
     });
   }
+  */
 
   const now = Date.now();
   const sessionId = 'ses_' + now + '_' + Math.random().toString(36).substring(2, 6);

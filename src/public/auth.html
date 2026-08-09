@@ -261,7 +261,12 @@
         const data = await res.json();
 
         if (res.ok && data.success) {
-          renderMode('verify', { email: data.data.email, otp: data.data.verification_otp });
+          localStorage.setItem('omni_session_token', data.token);
+          if (data.data.org.onboarding_step === 'plan_selection') {
+            renderMode('onboarding');
+          } else {
+            window.location.href = '/app';
+          }
         } else {
           errorEl.innerText = data.message || 'Signup failed.';
         }
