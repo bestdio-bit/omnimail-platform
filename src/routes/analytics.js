@@ -12,7 +12,7 @@ router.use(authenticateKey);
  */
 router.get('/internal', requireRole('owner', 'admin'), async (req, res) => {
   // Revenue: estimate MRR based on org plan tiers
-  const orgs = await await db.prepare('SELECT plan_tier, COUNT(*) as count FROM orgs GROUP BY plan_tier').all();
+  const orgs = await db.prepare('SELECT plan_tier, COUNT(*) as count FROM orgs GROUP BY plan_tier').all();
   let mrr = 0;
   for (const o of orgs) {
     if (o.plan_tier === 'entry') mrr += o.count * 7;

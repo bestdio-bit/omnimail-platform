@@ -10,7 +10,7 @@ let lastMaintenanceRun = 0;
  */
 async function processEmailQueue() {
   // Select up to 50 queued emails
-  const queuedEmails = await await db.prepare(`
+  const queuedEmails = await db.prepare(`
     SELECT * FROM emails
     WHERE status = 'queued'
     ORDER BY queued_at ASC
@@ -111,7 +111,7 @@ async function processAutomations() {
 
   for (const run of activeRuns) {
     try {
-      const automation = await await db.prepare('SELECT * FROM automations WHERE id = ?').get(run.automation_id);
+      const automation = await db.prepare('SELECT * FROM automations WHERE id = ?').get(run.automation_id);
       if (!automation || automation.status !== 'active') {
         await db.prepare("UPDATE automation_runs SET status = 'cancelled' WHERE id = ?").run(run.id);
         continue;
@@ -232,7 +232,7 @@ async function processDailyMaintenance() {
   console.log('🔧 [Maintenance Worker] Running daily standing audit & drift checks...');
   
   // 1. Check DNS drift for verified domains
-  const verifiedDomains = await await db.prepare("SELECT * FROM domains WHERE status = 'verified' OR dkim_verified = 1").all();
+  const verifiedDomains = await db.prepare("SELECT * FROM domains WHERE status = 'verified' OR dkim_verified = 1").all();
   for (const dom of verifiedDomains) {
     // Record snapshot
     const snapId = 'snap_' + now + '_' + Math.random().toString(36).substring(2, 6);
@@ -243,7 +243,7 @@ async function processDailyMaintenance() {
   }
 
   // 2. Perform blocklist check for dedicated IPs
-  const orgsWithIp = await await db.prepare("SELECT dedicated_ip FROM orgs WHERE dedicated_ip IS NOT NULL").all();
+  const orgsWithIp = await db.prepare("SELECT dedicated_ip FROM orgs WHERE dedicated_ip IS NOT NULL").all();
   for (const org of orgsWithIp) {
     const chkId = 'chk_' + now + '_' + Math.random().toString(36).substring(2, 6);
     db.prepare(`

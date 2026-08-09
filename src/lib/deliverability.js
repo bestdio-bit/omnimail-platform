@@ -10,16 +10,7 @@ const MAJOR_DNSBLS = [
   'dnsbl.sorbs.net',
 ];
 
-try {
-  db.exec(`CREATE TABLE IF NOT EXISTS domain_dns_snapshots (
-    domain_id TEXT PRIMARY KEY,
-    spf_record TEXT,
-    dkim_record TEXT,
-    dmarc_record TEXT,
-    bimi_record TEXT,
-    snapshotted_at INTEGER
-  );`);
-} catch (e) {}
+
 
 async function generateBimiRecord(logoUrl, vmcUrl) {
   if (!logoUrl) return { error: 'logoUrl is required for BIMI (must be SVG)' };

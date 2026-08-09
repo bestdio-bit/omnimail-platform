@@ -1,15 +1,7 @@
 const { nanoid } = require('nanoid');
 const db = require('../db');
 
-// Ensure clicks table exists without modifying db/index.js
-try {
-  db.exec(`CREATE TABLE IF NOT EXISTS clicks (
-    id TEXT PRIMARY KEY,
-    email_id TEXT NOT NULL,
-    original_url TEXT NOT NULL,
-    created_at INTEGER NOT NULL DEFAULT 0
-  );`);
-} catch (e) {}
+
 
 async function rewriteLinksForTracking(html, emailId, baseUrl) {
   if (!html) return html;

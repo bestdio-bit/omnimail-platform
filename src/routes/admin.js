@@ -13,7 +13,7 @@ router.use(requireSuperAdmin);
  * List all organizations globally
  */
 router.get('/orgs', async (req, res) => {
-  const orgs = await await db.prepare('SELECT * FROM orgs ORDER BY created_at DESC').all();
+  const orgs = await db.prepare('SELECT * FROM orgs ORDER BY created_at DESC').all();
   // Get user counts for each org
   for (const org of orgs) {
     org.user_count = (await (await db.prepare('SELECT COUNT(*) as count FROM users WHERE org_id = ?').get(org.id))).count;

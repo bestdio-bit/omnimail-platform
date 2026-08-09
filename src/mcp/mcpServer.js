@@ -92,7 +92,7 @@ async function executeTool(toolName, args = {}, apiKey = {}) {
     case 'list_emails': {
       const limit = Number(args.limit || 50);
       if (args.status) {
-        return await await db.prepare('SELECT id, to_address, subject, status, queued_at as created_at FROM emails WHERE org_id = ? AND status = ? ORDER BY queued_at DESC LIMIT ?').all(orgId, args.status, limit);
+        return await db.prepare('SELECT id, to_address, subject, status, queued_at as created_at FROM emails WHERE org_id = ? AND status = ? ORDER BY queued_at DESC LIMIT ?').all(orgId, args.status, limit);
       }
       return await db.prepare('SELECT id, to_address, subject, status, queued_at as created_at FROM emails WHERE org_id = ? ORDER BY queued_at DESC LIMIT ?').all(orgId, limit);
     }

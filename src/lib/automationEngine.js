@@ -7,7 +7,7 @@ async function executeStep(run) {
   if (!run || run.status !== 'running') return;
   const now = Date.now();
 
-  const node = await await db.prepare('SELECT * FROM automation_nodes WHERE id = ?').get(run.current_node_id);
+  const node = await db.prepare('SELECT * FROM automation_nodes WHERE id = ?').get(run.current_node_id);
   if (!node) {
     await db.prepare("UPDATE automation_runs SET status = 'completed', finished_at = ? WHERE id = ?").run(now, run.id);
     return;

@@ -4,7 +4,7 @@ const { render } = require('../routes/templates');
 
 async function resolveContent({ subject, html, text, template_id, variables, subjectOverride }) {
   if (template_id) {
-    const template = await await db.prepare('SELECT * FROM templates WHERE id = ?').get(template_id);
+    const template = await db.prepare('SELECT * FROM templates WHERE id = ?').get(template_id);
     if (!template) return { error: 'template_id does not match any template.' };
 
     let htmlBody = template.html_body || '';

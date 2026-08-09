@@ -280,6 +280,40 @@ async function initDb() {
         status TEXT DEFAULT 'active',
         created_at BIGINT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS audit_logs (
+        id TEXT PRIMARY KEY,
+        org_id TEXT,
+        user_id TEXT,
+        action TEXT,
+        resource_type TEXT,
+        resource_id TEXT,
+        details_json TEXT,
+        created_at BIGINT
+      );
+
+      CREATE TABLE IF NOT EXISTS domain_dns_snapshots (
+        domain_id TEXT PRIMARY KEY,
+        spf_record TEXT,
+        dkim_record TEXT,
+        dmarc_record TEXT,
+        bimi_record TEXT,
+        snapshotted_at BIGINT
+      );
+
+      CREATE TABLE IF NOT EXISTS clicks (
+        id TEXT PRIMARY KEY,
+        email_id TEXT NOT NULL,
+        original_url TEXT NOT NULL,
+        created_at BIGINT NOT NULL DEFAULT 0
+      );
+
+      CREATE TABLE IF NOT EXISTS blocklist_checks (
+        id TEXT PRIMARY KEY,
+        target TEXT,
+        blocklist_name TEXT,
+        status TEXT,
+        checked_at BIGINT
+      );
     `);
 
     console.log('✅ [DB] Core tables verified (Postgres)');
