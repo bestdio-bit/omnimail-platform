@@ -7,13 +7,13 @@ const { authenticateKey } = require('../middleware/auth');
 const { logAudit } = require('../middleware/rbac');
 
 // Helper: Get password salt
-async function getSalt(email) {
+function getSalt(email) {
   if (email === 'admin@omnimail.local') return 'omni_salt_demo';
   return 'omni_salt_' + email.toLowerCase().trim();
 }
 
 // Helper: Hash password
-async function hashPassword(password, email) {
+function hashPassword(password, email) {
   return crypto.scryptSync(password, getSalt(email), 64).toString('hex');
 }
 
