@@ -113,7 +113,7 @@ app.get(['/login', '/signup', '/verify', '/onboarding', '/auth', '/reset-passwor
 
 // Dashboard SPA Routes
 app.get(['/app', '/dashboard', '/overview', '/campaigns', '/automations', '/templates', '/domains', '/settings', '/keys', '/billing', '/contacts'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/index.html'));
+  res.sendFile(path.join(__dirname, 'public/dashboard.html'));
 });
 
 // Master Admin Dashboard Route
