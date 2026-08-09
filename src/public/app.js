@@ -3,7 +3,13 @@ let currentTab = 'overview';
 
 // Helper: fetch API with Bearer token (Session or Scoped Key)
 async function apiFetch(endpoint, options = {}) {
-  const token = localStorage.getItem('omni_session_token') || 'omni_live_master_key_9988776655';
+  const token = localStorage.getItem('omni_session_token');
+  if (!token) {
+    if (!window.location.pathname.includes('login') && !window.location.pathname.includes('signup')) {
+      window.location.href = '/login';
+      return;
+    }
+  }
   const headers = {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`,
@@ -17,6 +23,10 @@ async function apiFetch(endpoint, options = {}) {
       if (data.requires_verification) {
         window.location.href = `/verify?email=${encodeURIComponent(data.email || '')}`;
         return data;
+      }
+      if (res.status === 401) {
+        window.location.href = '/login';
+        return;
       }
     }
   }
