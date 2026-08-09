@@ -8,7 +8,7 @@ const sql = postgres(dbUrl, {
 });
 
 // Helper to convert SQLite syntax to Postgres syntax
-async function convertQuery(query) {
+function convertQuery(query) {
   let pgQuery = query;
   
   // Convert ? to $1, $2, etc. (assuming no '?' inside string literals for simplicity)
