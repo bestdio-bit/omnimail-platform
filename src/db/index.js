@@ -129,6 +129,7 @@ async function initDb() {
         created_at BIGINT NOT NULL
       );
 
+
       CREATE TABLE IF NOT EXISTS api_keys (
         id TEXT PRIMARY KEY,
         org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
