@@ -387,11 +387,15 @@ router.get('/me', async (req, res) => {
   const apiKeysCount = ((await db.prepare('SELECT COUNT(*) as count FROM api_keys WHERE org_id = ?').get(req.auth.org_id))).count;
   const sentCount = (await (await db.prepare("SELECT COUNT(*) as count FROM emails WHERE org_id = ? AND status = 'sent'").get(req.auth.org_id))).count;
 
+  // Check for any pending payments (for payment verification)
+  const pendingOrder = await db.prepare('SELECT * FROM checkout_orders WHERE org_id = ? AND status = ? ORDER BY created_at DESC LIMIT 1').get(req.auth.org_id, 'PENDING');
+
   res.json({
     success: true,
     data: {
       user,
       org,
+      pending_order: pendingOrder || null,
       team_members: teamMembers,
       stats: {
         api_keys_count: apiKeysCount,

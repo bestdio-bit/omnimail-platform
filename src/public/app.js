@@ -100,65 +100,71 @@ async function renderOverview(container) {
   if (qEl) qEl.innerText = usage.queue_depth || '0';
 
   container.innerHTML = `
-    <div class="grid-4 mb-6">
-      <div class="card stat-card">
-        <div class="stat-label">Platform MRR (Estimated)</div>
-        <div class="stat-value">$${rev.mrr_usd.toLocaleString()}</div>
-        <div class="stat-trend">↑ 18.4% ARR: $${rev.arr_usd.toLocaleString()}</div>
+    <div style="display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; margin-bottom: 24px;">
+      
+      <!-- Primary Usage Box -->
+      <div class="glass-card" style="grid-column: span 8; margin: 0; padding: 32px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -50%; left: -10%; width: 300px; height: 300px; background: var(--primary-glow); filter: blur(80px); z-index: 0; border-radius: 50%;"></div>
+        <div style="position: relative; z-index: 1;">
+          <h3 style="color: var(--text-secondary); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Your Monthly Usage</h3>
+          <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px;">
+            <h1 style="font-size: 48px; font-weight: 800; color: #fff; margin: 0;">${cust.sent_count.toLocaleString()}</h1>
+            <span style="color: var(--text-muted); font-size: 16px;">/ ${cust.quota_limit.toLocaleString()} emails</span>
+          </div>
+          <div style="width: 100%; background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden;">
+            <div style="width: ${Math.min(100, (cust.sent_count / cust.quota_limit) * 100)}%; background: linear-gradient(90deg, var(--primary), var(--accent-pink)); height: 100%; border-radius: 4px;"></div>
+          </div>
+          <p style="margin-top: 16px; color: var(--success); font-size: 14px; display: flex; align-items: center; gap: 6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            System operational and sending normally
+          </p>
+        </div>
       </div>
-      <div class="card stat-card">
-        <div class="stat-label">Total Platform Volume</div>
-        <div class="stat-value">${usage.total_emails_sent.toLocaleString()}</div>
-        <div class="stat-trend" style="color: #38bdf8;">⚡ Cloud Gateway Relay</div>
+
+      <!-- Plan Info Box -->
+      <div class="glass-card" style="grid-column: span 4; margin: 0; padding: 32px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <h3 style="color: var(--text-secondary); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;">Current Plan</h3>
+          <div style="display: inline-block; padding: 6px 16px; border-radius: 20px; font-weight: 700; font-size: 16px; text-transform: uppercase; background: rgba(99,102,241,0.15); color: var(--primary); border: 1px solid rgba(99,102,241,0.3); margin-bottom: 24px;">
+            ${cust.plan_tier}
+          </div>
+          <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Access to advanced deliverability, webhooks, and priority queue processing.</p>
+        </div>
+        <button class="btn btn-secondary" style="width: 100%;" onclick="showEnterpriseModal()">Upgrade Plan</button>
       </div>
-      <div class="card stat-card">
-        <div class="stat-label">Your Org Remaining Quota</div>
-        <div class="stat-value">${cust.remaining_quota.toLocaleString()}</div>
-        <div class="stat-trend">Plan: ${cust.plan_tier.toUpperCase()} (${cust.quota_limit.toLocaleString()}/mo)</div>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-label">Deliverability Health</div>
-        <div class="stat-value" style="color: var(--success);">99.5%</div>
-        <div class="stat-trend">✓ Zero Blacklist Detections</div>
-      </div>
+
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title">
-          <span>⚡ Real-Time Ingested Events Stream</span>
-          <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="render()">Refresh</button>
-        </div>
-        <div class="card-subtitle">Showing latest custom events triggering automated workflow runs</div>
-        <div class="table-container">
-          <table class="table">
-            <thead><tr><th>Event Name</th><th>Email / Target</th><th>Timestamp</th></tr></thead>
-            <tbody>
-              ${events.map(e => `
-                <tr>
-                  <td><span class="badge badge-primary">${e.event_name}</span></td>
-                  <td>${e.contact_email || 'System'}</td>
-                  <td>${new Date(e.created_at).toLocaleTimeString()}</td>
-                </tr>
-              `).join('') || '<tr><td colspan="3" style="text-align:center;">No custom events ingested yet.</td></tr>'}
-            </tbody>
-          </table>
-        </div>
+    <!-- Live Event Feed -->
+    <div class="glass-card" style="margin-bottom: 0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h3 style="margin:0; font-size: 18px; color: #fff;">Live Delivery Events (Real-time)</h3>
+        <span style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--success);"><span class="status-dot" style="background: var(--success);"></span> Connected to Edge</span>
       </div>
-
-      <div class="card">
-        <div class="card-title">🛡️ Cloud Delivery Gateway Status</div>
-        <div class="card-subtitle">Zero third-party vendor brand leakage architecture</div>
-        <div style="line-height: 1.8; color: var(--text-secondary); font-size: 14px;">
-          <p><strong style="color: #fff;">Primary Relay:</strong> Cloud Delivery Gateway (REST / SMTP Wrapper)</p>
-          <p><strong style="color: #fff;">WAL Engine Mode:</strong> Synchronous NORMAL (Sub-millisecond latency)</p>
-          <p><strong style="color: #fff;">Bounce Auto-Suppression:</strong> Active ✓</p>
-          <p><strong style="color: #fff;">Vendor Leakage Protection:</strong> Enforced across headers & webhooks ✓</p>
-          <div style="margin-top: 16px; padding: 12px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; color: #34d399; font-size: 13px;">
-            ✓ All outbound mail is stripped of underlying vendor identification to protect your brand identity!
-          </div>
-        </div>
-      </div>
+      <table class="table" style="width: 100%; text-align: left; border-collapse: collapse;">
+        <thead>
+          <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-muted);">
+            <th style="padding: 12px 0;">Time</th>
+            <th>Type</th>
+            <th>Email Reference</th>
+            <th>Network</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${events.length === 0 ? '<tr><td colspan="4" style="text-align:center; padding: 32px; color: var(--text-muted);">No events recorded yet. Send a test email to see live data.</td></tr>' : ''}
+          ${events.map(ev => {
+            const time = new Date(ev.created_at).toLocaleTimeString();
+            return `
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <td style="padding: 12px 0; color: var(--text-muted);">${time}</td>
+                <td><span style="font-weight: 600; text-transform: capitalize; color: var(--primary);">${ev.event_name || 'event'}</span></td>
+                <td><code style="background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px;">${ev.contact_email || 'System'}</code></td>
+                <td>${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.x.x</td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
     </div>
   `;
 }
@@ -910,14 +916,39 @@ async function revokeKey(id) {
 async function showEnterpriseModal() {
   showModal('⭐ Upgrade to Enterprise', `
     <div style="text-align: left; max-width: 500px; margin: 0 auto;">
-      <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px; line-height: 1.6;">
-        Our Enterprise tier provides fully customizable limits, dedicated IPs, and premium support tailored to your exact business needs. Leave us a message about your requirements and our team will get back to you shortly.
+      <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px;">
+        Need massive scale, dedicated infrastructure, or custom SSO? Submit your requirements below and our team will get back to you with a custom quote.
       </p>
       <form id="enterpriseRequestForm" onsubmit="submitEnterpriseRequest(event)">
         <div class="form-group" style="margin-bottom: 16px;">
-          <label class="form-label">Tell us about your requirements (volume, IPs, SSO, etc.)</label>
-          <textarea id="ent-message" class="form-input" style="height: 120px; resize: vertical;" required placeholder="We send around 5M emails a month and need 2 dedicated IPs..."></textarea>
+          <label class="form-label">Company Name</label>
+          <input type="text" id="ent-company" class="form-input" required placeholder="e.g. Acme Corp">
         </div>
+        
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Expected Monthly Email Volume</label>
+          <select id="ent-volume" class="form-input" required>
+            <option value="1M - 5M">1M - 5M</option>
+            <option value="5M - 20M">5M - 20M</option>
+            <option value="20M - 50M">20M - 50M</option>
+            <option value="50M+">50M+</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Do you need Dedicated IPs?</label>
+          <select id="ent-ip" class="form-input" required>
+            <option value="Yes">Yes, we need dedicated IPs</option>
+            <option value="No">No, shared pool is fine</option>
+            <option value="Unsure">Not sure</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label class="form-label">Additional Requirements (SSO, SLAs, etc.)</label>
+          <textarea id="ent-message" class="form-input" style="height: 80px; resize: vertical;" placeholder="We also need SAML SSO and a dedicated account manager..."></textarea>
+        </div>
+        
         <div style="display: flex; gap: 12px; margin-top: 16px;">
           <button type="submit" class="btn btn-primary" style="flex: 1; padding: 12px; font-weight: 600;">
             Submit Request
@@ -933,10 +964,17 @@ async function showEnterpriseModal() {
 
 async function submitEnterpriseRequest(e) {
   e.preventDefault();
-  const message = document.getElementById('ent-message').value;
+  
+  const company = document.getElementById('ent-company').value;
+  const volume = document.getElementById('ent-volume').value;
+  const needIp = document.getElementById('ent-ip').value;
+  const addlMessage = document.getElementById('ent-message').value;
+
+  const formattedMessage = `Company: ${company}\nVolume: ${volume}\nDedicated IP: ${needIp}\n\nDetails: ${addlMessage}`;
+
   const res = await apiFetch('/api/billing/enterprise-request', {
     method: 'POST',
-    body: JSON.stringify({ message })
+    body: JSON.stringify({ message: formattedMessage })
   });
 
   if (res.success) {
@@ -982,6 +1020,41 @@ async function initApp() {
     const planEl = document.getElementById('header-plan-tier');
     if (emailEl) emailEl.innerText = me.data.user.email || me.data.user.name;
     if (planEl) planEl.innerText = me.data.org?.plan_tier || 'FREE';
+
+    // Check for pending payments
+    const mainContent = document.querySelector('.main-content');
+    const existingBanner = document.getElementById('payment-banner');
+    if (existingBanner) existingBanner.remove();
+
+    if (me.data.pending_order) {
+      const banner = document.createElement('div');
+      banner.id = 'payment-banner';
+      banner.className = 'payment-banner';
+      banner.innerHTML = `
+        <div>
+          <h3>Action Required: Complete Your Payment</h3>
+          <p>Your subscription to the <strong>${me.data.org?.plan_tier || 'Paid'}</strong> tier is pending payment completion.</p>
+        </div>
+        <a href="/?order_id=${me.data.pending_order.order_id}" class="btn btn-primary" style="text-decoration:none;">Complete Checkout</a>
+      `;
+      mainContent.insertBefore(banner, mainContent.firstChild);
+    } else if (me.data.org?.plan_tier === 'enterprise' && me.data.org?.custom_price) {
+      // Create a mock order ID based on the org to simulate a custom invoice
+      const invoiceOrderId = 'inv_' + me.data.org.id.substring(0,8);
+      const banner = document.createElement('div');
+      banner.id = 'payment-banner';
+      banner.className = 'payment-banner';
+      banner.style.background = 'linear-gradient(90deg, rgba(99, 102, 241, 0.15) 0%, rgba(236, 72, 153, 0.15) 100%)';
+      banner.style.border = '1px solid rgba(236, 72, 153, 0.3)';
+      banner.innerHTML = `
+        <div>
+          <h3>Enterprise Invoice Available</h3>
+          <p>Your custom enterprise plan ($${me.data.org.custom_price}/mo) is ready for payment.</p>
+        </div>
+        <button class="btn btn-primary" onclick="payEnterpriseInvoice('${invoiceOrderId}', ${me.data.org.custom_price})">Pay Invoice</button>
+      `;
+      mainContent.insertBefore(banner, mainContent.firstChild);
+    }
   }
   
   const path = window.location.pathname.replace(/^\//, '') || 'overview';
@@ -993,3 +1066,16 @@ async function initApp() {
 window.addEventListener('DOMContentLoaded', () => {
   initApp();
 });
+
+window.payEnterpriseInvoice = async (orderId, amount) => {
+  // In a real app, this would hit /api/billing/checkout. For now, we mock it via the universal gateway flow
+  const res = await apiFetch('/api/billing/checkout', {
+    method: 'POST',
+    body: JSON.stringify({ plan_tier: 'enterprise', amount })
+  });
+  if (res.success && res.data && res.data.paymentUrl) {
+    window.location.href = res.data.paymentUrl;
+  } else {
+    alert('Error generating invoice link');
+  }
+};

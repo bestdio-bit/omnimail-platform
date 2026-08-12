@@ -187,6 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const org = data.data;
         document.getElementById('entConfigOrgId').value = org.id;
         document.getElementById('entConfigTier').value = org.plan_tier;
+        document.getElementById('entConfigPrice').value = org.custom_price || '';
         document.getElementById('entConfigVolume').value = org.custom_send_volume;
         document.getElementById('entConfigIp').value = org.dedicated_ip || '';
         document.getElementById('entConfigPanel').style.display = 'block';
@@ -204,6 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const id = document.getElementById('entConfigOrgId').value;
     const plan_tier = document.getElementById('entConfigTier').value;
+    const custom_price_val = document.getElementById('entConfigPrice').value;
+    const custom_price = custom_price_val ? parseInt(custom_price_val, 10) : null;
     const custom_send_volume = parseInt(document.getElementById('entConfigVolume').value, 10);
     const dedicated_ip = document.getElementById('entConfigIp').value || null;
 
@@ -211,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const res = await fetch(`/api/admin/orgs/${id}`, {
         method: 'PUT',
         headers,
-        body: JSON.stringify({ plan_tier, custom_send_volume, dedicated_ip })
+        body: JSON.stringify({ plan_tier, custom_send_volume, dedicated_ip, custom_price })
       });
       const data = await res.json();
       if (data.success) {

@@ -41,7 +41,7 @@ router.get('/orgs', async (req, res) => {
  * Update organization plan or volume
  */
 router.put('/orgs/:id', async (req, res) => {
-  const { plan_tier, custom_send_volume, dedicated_ip } = req.body;
+  const { plan_tier, custom_send_volume, dedicated_ip, custom_price } = req.body;
   const org = await db.prepare('SELECT * FROM orgs WHERE id = ?').get(req.params.id);
   
   if (!org) {
@@ -51,10 +51,11 @@ router.put('/orgs/:id', async (req, res) => {
   const newTier = plan_tier || org.plan_tier;
   const newVolume = custom_send_volume !== undefined ? custom_send_volume : org.custom_send_volume;
   const newIp = dedicated_ip !== undefined ? dedicated_ip : org.dedicated_ip;
+  const newPrice = custom_price !== undefined ? custom_price : org.custom_price;
 
-  await db.prepare('UPDATE orgs SET plan_tier = ?, custom_send_volume = ?, dedicated_ip = ? WHERE id = ?').run(newTier, newVolume, newIp, org.id);
+  await db.prepare('UPDATE orgs SET plan_tier = ?, custom_send_volume = ?, dedicated_ip = ?, custom_price = ? WHERE id = ?').run(newTier, newVolume, newIp, newPrice, org.id);
   
-  logAudit(org.id, req.auth?.key_id || 'admin', 'org_overridden_by_admin', 'org', org.id, { plan_tier: newTier, custom_send_volume: newVolume, dedicated_ip: newIp });
+  logAudit(org.id, req.auth?.key_id || 'admin', 'org_overridden_by_admin', 'org', org.id, { plan_tier: newTier, custom_send_volume: newVolume, dedicated_ip: newIp, custom_price: newPrice });
 
   res.json({ success: true, message: 'Organization updated successfully.' });
 });

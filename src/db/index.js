@@ -103,6 +103,7 @@ async function initDb() {
         billing_cycle TEXT DEFAULT 'monthly',
         custom_send_volume INTEGER DEFAULT 5000,
         dedicated_ip TEXT,
+        custom_price INTEGER,
         created_at BIGINT NOT NULL
       );
 
@@ -315,6 +316,9 @@ async function initDb() {
         created_at BIGINT
       );
 
+      CREATE INDEX IF NOT EXISTS idx_emails_campaign_id ON emails (campaign_id);
+      CREATE INDEX IF NOT EXISTS idx_audit_logs_org_id ON audit_logs (org_id);
+
       DROP TABLE IF EXISTS domain_dns_snapshots;
       CREATE TABLE IF NOT EXISTS domain_dns_snapshots (
         id TEXT PRIMARY KEY,
@@ -341,6 +345,9 @@ async function initDb() {
         checked_at BIGINT
       );
     `);
+
+    // Schema Migrations for existing tables
+    try { await sql.unsafe(`ALTER TABLE orgs ADD COLUMN custom_price INTEGER;`); } catch (e) { /* Ignore if exists */ }
 
     console.log('✅ [DB] Core tables verified (Postgres)');
 
