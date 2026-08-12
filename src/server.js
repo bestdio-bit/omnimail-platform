@@ -22,8 +22,10 @@ const supabaseRouter = require('./routes/supabase');
 const trackRouter = require('./routes/track');
 const unsubscribeRouter = require('./routes/unsubscribe');
 const adminRouter = require('./routes/admin');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT || 3000;
 
 // Middleware

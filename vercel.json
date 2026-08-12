@@ -1,0 +1,125 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://omnimail-platform.onrender.com/api/$1"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://omnimail-platform.onrender.com/sitemap.xml"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "https://omnimail-platform.onrender.com/robots.txt"
+    },
+    {
+      "source": "/login",
+      "destination": "/src/public/auth.html"
+    },
+    {
+      "source": "/signup",
+      "destination": "/src/public/auth.html"
+    },
+    {
+      "source": "/verify",
+      "destination": "/src/public/auth.html"
+    },
+    {
+      "source": "/onboarding",
+      "destination": "/src/public/auth.html"
+    },
+    {
+      "source": "/auth",
+      "destination": "/src/public/auth.html"
+    },
+    {
+      "source": "/reset-password",
+      "destination": "/src/public/auth.html"
+    },
+    {
+      "source": "/app",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/overview",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/campaigns",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/automations",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/templates",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/domains",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/settings",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/keys",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/billing",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/contacts",
+      "destination": "/src/public/dashboard.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/src/public/admin.html"
+    },
+    {
+      "source": "/pricing",
+      "destination": "/src/public/marketing.html"
+    },
+    {
+      "source": "/features",
+      "destination": "/src/public/marketing.html"
+    },
+    {
+      "source": "/docs",
+      "destination": "/src/public/marketing.html"
+    },
+    {
+      "source": "/blog",
+      "destination": "/src/public/marketing.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/src/public/marketing.html"
+    },
+    {
+      "source": "/marketing",
+      "destination": "/src/public/marketing.html"
+    },
+    {
+      "source": "/(index\\.css|.*\\.js|.*\\.png|.*\\.jpg|.*\\.svg|.*\\.ico)",
+      "destination": "/src/public/$1"
+    },
+    {
+      "source": "/",
+      "destination": "/src/public/marketing.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/src/public/marketing.html"
+    }
+  ]
+}
