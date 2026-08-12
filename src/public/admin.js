@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${org.user_count}</td>
             <td>${org.custom_send_volume.toLocaleString()}</td>
             <td>${date}</td>
-            <td><button class="btn" style="padding:6px 12px; font-size:12px;" onclick="editOrg('${org.id}', '${org.plan_tier}', ${org.custom_send_volume}, '${org.dedicated_ip || ''}')">Configure</button></td>
+            <td><button class="btn" style="padding:6px 12px; font-size:12px;" onclick="editOrg('${org.id}')">Configure</button></td>
           `;
           tbody.appendChild(tr);
         });
@@ -225,43 +225,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Edit Org Logic
-  window.editOrg = (id, currentTier, currentVol, dedicatedIp) => {
-    document.getElementById('editOrgId').value = id;
-    document.getElementById('editPlanTier').value = currentTier;
-    document.getElementById('editVolume').value = currentVol;
-    document.getElementById('editDedicatedIp').value = dedicatedIp || '';
-    document.getElementById('editModal').style.display = 'flex';
+  window.editOrg = (id) => {
+    // Switch to enterprise config tab
+    const viewSections = document.querySelectorAll('.view-section');
+    viewSections.forEach(section => {
+      section.classList.add('hidden');
+    });
+    document.getElementById('view-enterprise-config').classList.remove('hidden');
+
+    // Update active nav item
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelector('.nav-item[data-view="enterprise-config"]').classList.add('active');
+
+    // Fill the search input and trigger load
+    document.getElementById('entSearchOrgId').value = id;
+    window.loadEnterpriseConfig();
   };
 
-  window.closeEditModal = () => {
-    document.getElementById('editModal').style.display = 'none';
-  };
 
-  document.getElementById('editOrgForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const id = document.getElementById('editOrgId').value;
-    const plan_tier = document.getElementById('editPlanTier').value;
-    const custom_send_volume = parseInt(document.getElementById('editVolume').value, 10);
-    const dedicated_ip = document.getElementById('editDedicatedIp').value || null;
 
-    fetch(`/api/admin/orgs/${id}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify({ plan_tier, custom_send_volume, dedicated_ip })
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          showToast('Organization configured successfully', 'success');
-          closeEditModal();
-          fetchOrgs();
-        } else {
-          showToast(res.message, 'error');
-        }
-      })
-      .catch(console.error);
-  });
 
   // Provision Business Logic
   document.getElementById('provisionForm').addEventListener('submit', (e) => {
