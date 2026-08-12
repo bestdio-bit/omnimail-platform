@@ -5,7 +5,18 @@ const db = require('../db');
 const { authenticateKey } = require('../middleware/auth');
 const { requireSuperAdmin, logAudit } = require('../middleware/rbac');
 
-router.use(authenticateKey);
+// Admin routes accept two auth methods:
+// 1. tok_admin_ tokens (from /api/admin-auth/login) — skip authenticateKey
+// 2. Regular user session tokens — go through authenticateKey first
+router.use((req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer tok_admin_')) {
+    // Skip authenticateKey, go straight to requireSuperAdmin
+    return next();
+  }
+  // Otherwise, run normal user auth first
+  authenticateKey(req, res, next);
+});
 router.use(requireSuperAdmin);
 
 /**

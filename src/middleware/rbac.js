@@ -48,15 +48,33 @@ async function logAudit(orgId, userId, action, resourceType, resourceId, details
 
 /**
  * Super Admin Middleware
- * Restricts access to the system owner (Master Admin) of the default org
+ * Restricts access to the site owner via:
+ *   1. A dedicated admin session token (tok_admin_) from /api/admin-auth/login
+ *   2. Legacy: the 'owner' of the default root org 'org_demo_omnimail_001'
  */
 async function requireSuperAdmin(req, res, next) {
-  if (!req.auth || !req.auth.role) {
-    return res.status(401).json({ error: 'unauthorized', message: 'Authentication required.' });
+  // Check for dedicated admin token first
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer tok_admin_')) {
+    const token = authHeader.split(' ')[1].trim();
+    const { adminSessions } = require('../routes/admin-auth');
+    const session = adminSessions.get(token);
+
+    if (session && session.expiresAt > Date.now()) {
+      req.adminEmail = session.email;
+      // Attach a minimal auth object so admin routes work
+      req.auth = req.auth || {
+        key_id: 'admin_owner',
+        org_id: 'org_demo_omnimail_001',
+        role: 'owner',
+        is_session: true
+      };
+      return next();
+    }
   }
 
-  // Define super admin as the 'owner' of the default root organization 'org_demo_omnimail_001'
-  if (req.auth.org_id === 'org_demo_omnimail_001' && req.auth.role === 'owner') {
+  // Fallback: check normal user session for legacy compatibility
+  if (req.auth && req.auth.role && req.auth.org_id === 'org_demo_omnimail_001' && req.auth.role === 'owner') {
     return next();
   }
 

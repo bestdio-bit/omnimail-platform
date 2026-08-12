@@ -984,12 +984,6 @@ async function initApp() {
     const planEl = document.getElementById('header-plan-tier');
     if (emailEl) emailEl.innerText = me.data.user.email || me.data.user.name;
     if (planEl) planEl.innerText = me.data.org?.plan_tier || 'FREE';
-    
-    // Reveal Master Admin button if user is the owner of the root demo org
-    if (me.data.user.role === 'owner' && me.data.org?.id === 'org_demo_omnimail_001') {
-      const adminNav = document.getElementById('admin-nav-item');
-      if (adminNav) adminNav.style.display = 'flex';
-    }
   }
   
   const path = window.location.pathname.replace(/^\//, '') || 'overview';

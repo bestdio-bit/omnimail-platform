@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniMail — Site Owner Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0b10;
+      color: #e6eaf3;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image:
+        radial-gradient(circle at 30% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%);
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: rgba(22, 24, 35, 0.85);
+      backdrop-filter: blur(20px);
+      border: 1px solid #252940;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 32px;
+    }
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+    }
+    .brand h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.5px;
+    }
+    .brand span {
+      display: block;
+      font-size: 11px;
+      color: #6366f1;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      color: #a0a8c0;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      padding: 8px 16px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: 8px;
+      color: #f87171;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #a0a8c0;
+      margin-bottom: 6px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: #0e1017;
+      border: 1px solid #252940;
+      border-radius: 10px;
+      color: white;
+      font-family: inherit;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+    }
+    .form-input::placeholder {
+      color: #4a5068;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+      margin-top: 8px;
+    }
+    .btn-login:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+    }
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .error-msg {
+      color: #f87171;
+      font-size: 13px;
+      text-align: center;
+      margin-top: 14px;
+      font-weight: 500;
+      min-height: 20px;
+    }
+
+    .footer-text {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #1e2130;
+      color: #6b7280;
+      font-size: 12px;
+    }
+    .footer-text a {
+      color: #6366f1;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div>
+        <h1>OmniMail</h1>
+        <span>Site Owner Panel</span>
+      </div>
+    </div>
+
+    <h2>Owner Login</h2>
+    <p class="subtitle">This area is restricted to the site owner only.</p>
+
+    <div class="security-badge">
+      🔒 Protected — Credentials set via server environment variables
+    </div>
+
+    <form id="adminLoginForm">
+      <div class="form-group">
+        <label class="form-label">Admin Email</label>
+        <input type="email" id="admin-email" class="form-input" required placeholder="your-admin@email.com" autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Admin Password</label>
+        <input type="password" id="admin-password" class="form-input" required placeholder="••••••••" autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn-login">Authenticate →</button>
+      <div class="error-msg" id="login-error"></div>
+    </form>
+
+    <div class="footer-text">
+      Not the site owner? <a href="/login">Go to User Login →</a>
+    </div>
+  </div>
+
+  <script>
+    // If already logged in as admin, redirect to admin dashboard
+    if (localStorage.getItem('omni_admin_token')) {
+      fetch('/api/admin-auth/verify', {
+        headers: { 'Authorization': 'Bearer ' + localStorage.getItem('omni_admin_token') }
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) window.location.href = '/admin';
+      })
+      .catch(() => {});
+    }
+
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('admin-email').value;
+      const password = document.getElementById('admin-password').value;
+      const errorEl = document.getElementById('login-error');
+      errorEl.innerText = '';
+
+      try {
+        const res = await fetch('/api/admin-auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          localStorage.setItem('omni_admin_token', data.token);
+          window.location.href = '/admin';
+        } else {
+          errorEl.innerText = data.message || 'Authentication failed.';
+        }
+      } catch (err) {
+        errorEl.innerText = 'Network error. Please try again.';
+      }
+    });
+  </script>
+
+</body>
+</html>

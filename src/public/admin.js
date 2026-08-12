@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const token = localStorage.getItem('omni_session_token');
+  const token = localStorage.getItem('omni_admin_token');
   if (!token) {
-    window.location.href = '/login';
+    window.location.href = '/admin/login';
     return;
   }
 
@@ -30,8 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function handleAuthError(res) {
     if (res.error === 'forbidden_super_admin') {
-      showToast('Master Admin privileges required. Redirecting...', 'error');
-      setTimeout(() => window.location.href = '/app', 2000);
+      showToast('Admin privileges required. Redirecting to login...', 'error');
+      localStorage.removeItem('omni_admin_token');
+      setTimeout(() => window.location.href = '/admin/login', 2000);
     } else {
       showToast('Access denied: ' + (res.message || 'Unknown error'), 'error');
     }
@@ -194,6 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Admin logout
+  window.logoutAdmin = () => {
+    fetch('/api/admin-auth/logout', {
+      method: 'POST',
+      headers
+    }).finally(() => {
+      localStorage.removeItem('omni_admin_token');
+      window.location.href = '/admin/login';
+    });
+  };
 
   // Init
   fetchStats();

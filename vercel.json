@@ -6,6 +6,10 @@
       "destination": "https://omnimail-platform.onrender.com/api/$1"
     },
     {
+      "source": "/admin/login",
+      "destination": "/src/public/admin-login.html"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "https://omnimail-platform.onrender.com/sitemap.xml"
     },

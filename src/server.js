@@ -22,6 +22,7 @@ const supabaseRouter = require('./routes/supabase');
 const trackRouter = require('./routes/track');
 const unsubscribeRouter = require('./routes/unsubscribe');
 const adminRouter = require('./routes/admin');
+const adminAuthRouter = require('./routes/admin-auth');
 const cors = require('cors');
 
 const app = express();
@@ -53,6 +54,7 @@ app.use('/api/integrations/supabase', supabaseRouter);
 app.use('/api/track', trackRouter);
 app.use('/api/unsubscribe', unsubscribeRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/admin-auth', adminAuthRouter);
 
 // Health check
 app.get('/api/health', async (req, res) => {
@@ -119,6 +121,10 @@ app.get(['/app', '/dashboard', '/overview', '/campaigns', '/automations', '/temp
 });
 
 // Master Admin Dashboard Route
+app.get('/admin/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/admin-login.html'));
+});
+
 app.get('/admin', async (req, res) => {
   res.sendFile(path.join(__dirname, 'public/admin.html'));
 });
