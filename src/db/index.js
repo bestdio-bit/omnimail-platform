@@ -152,6 +152,17 @@ async function initDb() {
         updated_at BIGINT NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS enterprise_requests (
+        id TEXT PRIMARY KEY,
+        org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        message TEXT,
+        status TEXT DEFAULT 'pending',
+        created_at BIGINT NOT NULL
+      );
+
       CREATE TABLE IF NOT EXISTS domains (
         id TEXT PRIMARY KEY,
         org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const crypto = require('crypto');
 const checkout = require('../lib/checkout');
 const { authenticateKey } = require('../middleware/auth');
 const { requireRole, logAudit } = require('../middleware/rbac');
@@ -125,6 +126,28 @@ router.post('/checkout', requireRole('owner', 'admin', 'billing'), async (req, r
 router.get('/orders', requireRole('owner', 'admin', 'billing', 'read_only'), async (req, res) => {
   const orders = await db.prepare('SELECT * FROM checkout_orders WHERE org_id = ? ORDER BY created_at DESC').all(req.auth.org_id);
   res.json({ success: true, data: orders });
+});
+
+/**
+ * POST /api/billing/enterprise-request
+ * Submit an enterprise pricing request
+ */
+router.post('/enterprise-request', async (req, res) => {
+  const { message } = req.body;
+  const id = 'req_' + crypto.randomBytes(8).toString('hex');
+  const now = Date.now();
+
+  try {
+    await db.prepare(`
+      INSERT INTO enterprise_requests (id, org_id, user_id, name, email, message, status, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(id, req.auth.org_id, req.auth.user_id || 'unknown', req.auth.name, req.auth.email || req.auth.name, message || '', 'pending', now);
+
+    res.json({ success: true, message: 'Enterprise request submitted successfully. Our team will contact you shortly.' });
+  } catch (err) {
+    console.error('Enterprise request error:', err);
+    res.status(500).json({ success: false, message: 'Failed to submit enterprise request.' });
+  }
 });
 
 module.exports = router;

@@ -907,54 +907,44 @@ async function revokeKey(id) {
 /* =========================================================================
    9. PRICING & UNIVERSAL CHECKOUT (Billing)
    ========================================================================= */
-async function renderPricing(container) {
-  const res = await apiFetch('/api/billing/plans');
-  const plans = res.data || [];
-
-  container.innerHTML = `
-    <div style="text-align: center; max-width: 700px; margin: 0 auto 32px;">
-      <h2 style="font-family: var(--font-heading); font-size: 28px; font-weight: 800; margin-bottom: 12px;">Transparent, Disruptive Pricing</h2>
-      <p style="color: var(--text-secondary); line-height: 1.6;">No daily sending caps on free tiers. No add-on taxes for dedicated IPs or enterprise SAML SSO. Server-to-server universal checkout with zero third-party vendor brand leakage.</p>
-    </div>
-
-    <div class="pricing-grid mb-6">
-      ${plans.map(p => `
-        <div class="pricing-card ${p.id === 'mid' ? 'featured' : ''}">
-          ${p.id === 'mid' ? '<div class="featured-badge">Most Popular</div>' : ''}
-          <div class="price-title">${p.name}</div>
-          <div style="color: var(--accent-pink); font-size: 13px; font-weight: 600;">${p.volume}</div>
-          <div class="price-amount">${p.price} <span>${p.id !== 'custom' && p.id !== 'free' ? '/month' : ''}</span></div>
-          <div style="font-size: 12px; color: var(--success); font-weight: 600; margin-bottom: 16px;">⚡ ${p.daily_cap}</div>
-          
-          <ul class="feature-list">
-            ${p.features.map(f => `<li>${f}</li>`).join('')}
-          </ul>
-
-          <button class="btn ${p.id === 'mid' ? 'btn-success' : 'btn-secondary'}" style="width: 100%;" onclick="simulateCheckout('${p.id}', '${p.price}')">
-            ${p.id === 'free' ? 'Current Plan' : (p.id === 'enterprise' ? 'Contact Sales' : '⚡ Upgrade via Checkout')}
-          </button>
+async function showEnterpriseModal() {
+  showModal('⭐ Upgrade to Enterprise', `
+    <div style="text-align: left; max-width: 500px; margin: 0 auto;">
+      <p style="color: var(--text-secondary); margin-bottom: 24px; font-size: 14px; line-height: 1.6;">
+        Our Enterprise tier provides fully customizable limits, dedicated IPs, and premium support tailored to your exact business needs. Leave us a message about your requirements and our team will get back to you shortly.
+      </p>
+      <form id="enterpriseRequestForm" onsubmit="submitEnterpriseRequest(event)">
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label">Tell us about your requirements (volume, IPs, SSO, etc.)</label>
+          <textarea id="ent-message" class="form-input" style="height: 120px; resize: vertical;" required placeholder="We send around 5M emails a month and need 2 dedicated IPs..."></textarea>
         </div>
-      `).join('')}
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600;">
+          Submit Enterprise Request
+        </button>
+      </form>
     </div>
-  `;
+  `);
 }
 
-async function simulateCheckout(planId, price) {
-  if (planId === 'free') return alert('You are already on the Free tier!');
-  const amount = planId === 'entry' ? 7 : 49;
-  const res = await apiFetch('/api/billing/checkout', { method: 'POST', body: JSON.stringify({ plan_tier: planId, amount }) });
+async function submitEnterpriseRequest(e) {
+  e.preventDefault();
+  const message = document.getElementById('ent-message').value;
+  const res = await apiFetch('/api/billing/enterprise-request', {
+    method: 'POST',
+    body: JSON.stringify({ message })
+  });
+
   if (res.success) {
-    showModal('💎 Universal Server-to-Server Checkout', `
-      <p style="color: var(--text-secondary); margin-bottom: 16px;">Payment Request initiated for Plan: <strong>${planId.toUpperCase()}</strong> ($${amount})</p>
-      <div style="background: #0a0b10; padding: 16px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px;">
-        <p>✓ Order ID: <code>${res.data.orderId}</code></p>
-        <p>✓ HMAC Signature: <code>${res.data.paymentToken.substring(0, 24)}...</code></p>
-        <p>✓ Vendor Brand Leakage: <strong style="color: var(--success);">NONE (Abstracted Gateway)</strong></p>
+    showModal('✅ Request Received', `
+      <div style="text-align: center; max-width: 500px; margin: 0 auto;">
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">
+          ${res.message}
+        </p>
+        <button class="btn btn-secondary" style="width: 100%" onclick="closeModal()">Close</button>
       </div>
-      <a href="${res.data.payPageUrl}" class="btn btn-success" style="width: 100%; text-decoration: none; text-align: center; display: block;">Proceed to Hosted PayPage Simulation →</a>
     `);
   } else {
-    alert(res.message);
+    alert(res.message || 'Failed to submit request.');
   }
 }
 
@@ -987,7 +977,7 @@ async function initApp() {
   }
   
   const path = window.location.pathname.replace(/^\//, '') || 'overview';
-  const tabMap = { app: 'overview', dashboard: 'overview', campaigns: 'campaigns', automations: 'automations', templates: 'templates', domains: 'domains', settings: 'keys', keys: 'keys', billing: 'billing', contacts: 'contacts', send: 'send' };
+  const tabMap = { app: 'overview', dashboard: 'overview', campaigns: 'campaigns', automations: 'automations', templates: 'templates', domains: 'domains', settings: 'keys', keys: 'keys', contacts: 'contacts', send: 'send' };
   switchTab(tabMap[path] || 'overview');
 }
 

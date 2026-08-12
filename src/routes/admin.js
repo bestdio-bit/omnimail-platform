@@ -41,7 +41,7 @@ router.get('/orgs', async (req, res) => {
  * Update organization plan or volume
  */
 router.put('/orgs/:id', async (req, res) => {
-  const { plan_tier, custom_send_volume } = req.body;
+  const { plan_tier, custom_send_volume, dedicated_ip } = req.body;
   const org = await db.prepare('SELECT * FROM orgs WHERE id = ?').get(req.params.id);
   
   if (!org) {
@@ -50,10 +50,11 @@ router.put('/orgs/:id', async (req, res) => {
 
   const newTier = plan_tier || org.plan_tier;
   const newVolume = custom_send_volume !== undefined ? custom_send_volume : org.custom_send_volume;
+  const newIp = dedicated_ip !== undefined ? dedicated_ip : org.dedicated_ip;
 
-  await db.prepare('UPDATE orgs SET plan_tier = ?, custom_send_volume = ? WHERE id = ?').run(newTier, newVolume, org.id);
+  await db.prepare('UPDATE orgs SET plan_tier = ?, custom_send_volume = ?, dedicated_ip = ? WHERE id = ?').run(newTier, newVolume, newIp, org.id);
   
-  logAudit(org.id, req.auth.key_id, 'org_overridden_by_admin', 'org', org.id, { plan_tier: newTier, custom_send_volume: newVolume });
+  logAudit(org.id, req.auth?.key_id || 'admin', 'org_overridden_by_admin', 'org', org.id, { plan_tier: newTier, custom_send_volume: newVolume, dedicated_ip: newIp });
 
   res.json({ success: true, message: 'Organization updated successfully.' });
 });
@@ -144,6 +145,32 @@ router.get('/stats', async (req, res) => {
   } catch (error) {
     console.error('Error fetching admin stats:', error);
     res.status(500).json({ success: false, message: 'Failed to load stats' });
+  }
+});
+
+/**
+ * GET /api/admin/enterprise-requests
+ * Fetch pending enterprise pricing requests
+ */
+router.get('/enterprise-requests', async (req, res) => {
+  try {
+    const requests = await db.prepare("SELECT * FROM enterprise_requests WHERE status = 'pending' ORDER BY created_at ASC").all();
+    res.json({ success: true, data: requests });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to load enterprise requests' });
+  }
+});
+
+/**
+ * PUT /api/admin/enterprise-requests/:id/complete
+ * Mark an enterprise request as completed
+ */
+router.put('/enterprise-requests/:id/complete', async (req, res) => {
+  try {
+    await db.prepare("UPDATE enterprise_requests SET status = 'completed' WHERE id = ?").run(req.params.id);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to complete request' });
   }
 });
 

@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>${org.user_count}</td>
             <td>${org.custom_send_volume.toLocaleString()}</td>
             <td>${date}</td>
-            <td><button class="btn" style="padding:6px 12px; font-size:12px;" onclick="editOrg('${org.id}', '${org.plan_tier}', ${org.custom_send_volume})">Edit Access</button></td>
+            <td><button class="btn" style="padding:6px 12px; font-size:12px;" onclick="editOrg('${org.id}', '${org.plan_tier}', ${org.custom_send_volume}, '${org.dedicated_ip || ''}')">Configure</button></td>
           `;
           tbody.appendChild(tr);
         });
@@ -135,16 +135,57 @@ document.addEventListener('DOMContentLoaded', () => {
       .catch(console.error);
   }
 
+  // Enterprise Requests Logic
+  async function fetchEnterpriseRequests() {
+    fetch('/api/admin/enterprise-requests', { headers })
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success) return;
+        const tbody = document.getElementById('enterpriseRequestsTableBody');
+        tbody.innerHTML = '';
+        res.data.forEach(req => {
+          const date = new Date(req.created_at).toLocaleDateString();
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${date}</td>
+            <td><code style="color:#a0a8c0">${req.org_id}</code></td>
+            <td><strong>${req.name}</strong><br><span style="font-size:12px;color:#a0a8c0">${req.email}</span></td>
+            <td style="max-width:300px; white-space:pre-wrap; font-size: 13px;">${req.message}</td>
+            <td><button class="btn btn-success" style="padding:6px 12px; font-size:12px;" onclick="completeEnterpriseRequest('${req.id}')">✓ Mark Complete</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+        if (res.data.length === 0) tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color:#a0a8c0;">No pending requests found.</td></tr>';
+      })
+      .catch(console.error);
+  }
+
+  window.completeEnterpriseRequest = async (id) => {
+    try {
+      const res = await fetch(\`/api/admin/enterprise-requests/\${id}/complete\`, { method: 'PUT', headers });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Request marked as complete', 'success');
+        fetchEnterpriseRequests();
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (err) {
+      showToast('Error completing request', 'error');
+    }
+  };
+
   // Edit Org Logic
-  window.editOrg = (id, currentTier, currentVol) => {
+  window.editOrg = (id, currentTier, currentVol, dedicatedIp) => {
     document.getElementById('editOrgId').value = id;
     document.getElementById('editPlanTier').value = currentTier;
     document.getElementById('editVolume').value = currentVol;
-    document.getElementById('editModal').classList.add('show');
+    document.getElementById('editDedicatedIp').value = dedicatedIp || '';
+    document.getElementById('editModal').style.display = 'flex';
   };
 
   window.closeEditModal = () => {
-    document.getElementById('editModal').classList.remove('show');
+    document.getElementById('editModal').style.display = 'none';
   };
 
   document.getElementById('editOrgForm').addEventListener('submit', (e) => {
@@ -152,22 +193,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = document.getElementById('editOrgId').value;
     const plan_tier = document.getElementById('editPlanTier').value;
     const custom_send_volume = parseInt(document.getElementById('editVolume').value, 10);
-    
+    const dedicated_ip = document.getElementById('editDedicatedIp').value || null;
+
     fetch(`/api/admin/orgs/${id}`, {
       method: 'PUT',
       headers,
-      body: JSON.stringify({ plan_tier, custom_send_volume })
+      body: JSON.stringify({ plan_tier, custom_send_volume, dedicated_ip })
     })
-    .then(res => res.json())
-    .then(res => {
-      if (res.success) {
-        closeEditModal();
-        showToast('Organization access updated successfully!', 'success');
-        fetchOrgs();
-      } else {
-        showToast('Error: ' + res.message, 'error');
-      }
-    });
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          showToast('Organization configured successfully', 'success');
+          closeEditModal();
+          fetchOrgs();
+        } else {
+          showToast(res.message, 'error');
+        }
+      })
+      .catch(console.error);
   });
 
   // Provision Business Logic
@@ -207,8 +250,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Init
+  // Initial fetch
   fetchStats();
   fetchOrgs();
   fetchBilling();
+  fetchEnterpriseRequests();
 });
