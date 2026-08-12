@@ -365,21 +365,17 @@
         </div>
         <div class="stat-card">
           <div class="stat-label">Total Users</div>
-          <div class="nav-item" onclick="switchAdminTab('users')">
-        <span>Users</span>
-      </div>
-      <div class="nav-item" onclick="switchAdminTab('billing')">
-        <span>Billing & Usage</span>
-      </div>
-      <div class="nav-item" onclick="switchAdminTab('internal')">
-        <span>Internal Systems</span>
-      </div>
-      <div class="nav-item" onclick="switchAdminTab('ent-requests')">
-        <span style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-          Enterprise Requests
-          <span class="badge" style="background: var(--accent-pink); margin-left: 8px;">New</span>
-        </span>
-      </div> class="stat-card">
+          <div class="stat-value" id="stat-users">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Emails Sent</div>
+          <div class="stat-value" id="stat-sent">-</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Emails Queued</div>
+          <div class="stat-value" id="stat-queued">-</div>
+        </div>
+        <div class="stat-card">
           <div class="stat-label">Total Orders</div>
           <div class="stat-value" id="stat-orders">-</div>
         </div>
