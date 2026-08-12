@@ -918,9 +918,14 @@ async function showEnterpriseModal() {
           <label class="form-label">Tell us about your requirements (volume, IPs, SSO, etc.)</label>
           <textarea id="ent-message" class="form-input" style="height: 120px; resize: vertical;" required placeholder="We send around 5M emails a month and need 2 dedicated IPs..."></textarea>
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px; font-weight: 600;">
-          Submit Enterprise Request
-        </button>
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1; padding: 12px; font-weight: 600;">
+            Submit Request
+          </button>
+          <button type="button" class="btn btn-secondary" style="flex: 1; padding: 12px; font-weight: 600;" onclick="closeModal()">
+            Cancel
+          </button>
+        </div>
       </form>
     </div>
   `);
@@ -956,7 +961,10 @@ async function showModal(title, contentHtml) {
   const body = document.getElementById('modal-body');
   if (!modal || !body) return;
   body.innerHTML = `
-    <h3 style="font-family: var(--font-heading); font-size: 20px; font-weight: 700; margin-bottom: 16px; color: #fff;">${title}</h3>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <h3 style="font-family: var(--font-heading); font-size: 20px; font-weight: 700; color: #fff; margin: 0;">${title}</h3>
+      <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 16px; border: none; background: transparent;" onclick="closeModal()">×</button>
+    </div>
     <div>${contentHtml}</div>
   `;
   modal.classList.add('active');
