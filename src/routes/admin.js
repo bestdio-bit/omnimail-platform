@@ -60,6 +60,22 @@ router.put('/orgs/:id', async (req, res) => {
 });
 
 /**
+ * GET /api/admin/orgs/:id
+ * Fetch a specific organization
+ */
+router.get('/orgs/:id', async (req, res) => {
+  try {
+    const org = await db.prepare('SELECT * FROM orgs WHERE id = ?').get(req.params.id);
+    if (!org) {
+      return res.status(404).json({ success: false, message: 'Organization not found.' });
+    }
+    res.json({ success: true, data: org });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to fetch organization' });
+  }
+});
+
+/**
  * POST /api/admin/orgs
  * Provision a new free business organization with an owner user
  */

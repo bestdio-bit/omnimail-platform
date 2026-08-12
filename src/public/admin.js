@@ -175,6 +175,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Enterprise Config Logic
+  window.loadEnterpriseConfig = async () => {
+    const orgId = document.getElementById('entSearchOrgId').value.trim();
+    if (!orgId) return showToast('Please enter an Organization ID', 'error');
+
+    try {
+      const res = await fetch(`/api/admin/orgs/${orgId}`, { headers });
+      const data = await res.json();
+      if (data.success) {
+        const org = data.data;
+        document.getElementById('entConfigOrgId').value = org.id;
+        document.getElementById('entConfigTier').value = org.plan_tier;
+        document.getElementById('entConfigVolume').value = org.custom_send_volume;
+        document.getElementById('entConfigIp').value = org.dedicated_ip || '';
+        document.getElementById('entConfigPanel').style.display = 'block';
+        showToast('Organization loaded', 'success');
+      } else {
+        showToast(data.message, 'error');
+        document.getElementById('entConfigPanel').style.display = 'none';
+      }
+    } catch (err) {
+      showToast('Failed to load org', 'error');
+    }
+  };
+
+  window.saveEnterpriseConfig = async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('entConfigOrgId').value;
+    const plan_tier = document.getElementById('entConfigTier').value;
+    const custom_send_volume = parseInt(document.getElementById('entConfigVolume').value, 10);
+    const dedicated_ip = document.getElementById('entConfigIp').value || null;
+
+    try {
+      const res = await fetch(`/api/admin/orgs/${id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ plan_tier, custom_send_volume, dedicated_ip })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast('Enterprise settings applied successfully!', 'success');
+        fetchOrgs(); // Refresh orgs list in background
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (err) {
+      showToast('Failed to save config', 'error');
+    }
+  };
+
   // Edit Org Logic
   window.editOrg = (id, currentTier, currentVol, dedicatedIp) => {
     document.getElementById('editOrgId').value = id;
