@@ -98,31 +98,69 @@ router.post('/orgs', async (req, res) => {
     `).run(orgId, name, plan_tier, custom_send_volume, now);
 
     // Create user (default password: 'changeme123')
-    const pwdHash = crypto.scryptSync('changeme123', 'omni_salt_demo', 64).toString('hex');
+    const salt = 'omni_salt_' + email.toLowerCase().trim();
+    const hash = crypto.scryptSync('changeme123', salt, 64).toString('hex');
     await db.prepare(`
       INSERT INTO users (id, org_id, email, name, role, password_hash, is_verified, created_at)
       VALUES (?, ?, ?, ?, 'owner', ?, 1, ?)
-    `).run(userId, orgId, email, 'Business Admin', pwdHash, now);
+    `).run(userId, orgId, email.toLowerCase().trim(), name, hash, now);
+  })();
 
-    // Create master API key for the new org
-    const rawKey = 'omni_live_' + crypto.randomBytes(16).toString('hex');
-    const keyHash = crypto.createHash('sha256').update(rawKey).digest('hex');
-    
+  logAudit(orgId, req.auth?.key_id || 'admin', 'org_provisioned_by_admin', 'org', orgId, { name, email, plan_tier });
+  res.status(201).json({ success: true, message: 'Organization provisioned successfully.', org_id: orgId });
+});
+
+/**
+ * POST /api/admin/internal-systems
+ * Provision a new internal app bypassing all billing
+ */
+router.post('/internal-systems', async (req, res) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    return res.status(400).json({ success: false, error: 'missing_fields', message: 'Name and email are required.' });
+  }
+
+  const now = Date.now();
+  const orgId = 'org_int_' + now + '_' + Math.random().toString(36).substring(2, 6);
+  const userId = 'usr_int_' + now + '_' + Math.random().toString(36).substring(2, 6);
+  const keyId = 'key_' + now + '_' + Math.random().toString(36).substring(2, 8);
+  
+  // Generate real api key
+  const rawSecret = crypto.randomBytes(32).toString('base64url');
+  const rawKey = 'sk_live_' + rawSecret;
+  const keyHash = crypto.createHash('sha256').update(rawKey).digest('hex');
+  const keyPrefix = rawKey.substring(0, 14);
+  
+  await db.transaction(async () => {
+    // 1. Create org (Internal tier, 1 billion volume)
+    await db.prepare(`
+      INSERT INTO orgs (id, name, plan_tier, custom_send_volume, onboarding_step, created_at)
+      VALUES (?, ?, 'internal', 1000000000, 'completed', ?)
+    `).run(orgId, name, now);
+
+    // 2. Create user
+    const salt = 'omni_salt_' + email.toLowerCase().trim();
+    const hash = crypto.scryptSync('changeme123', salt, 64).toString('hex');
+    await db.prepare(`
+      INSERT INTO users (id, org_id, email, name, role, password_hash, is_verified, created_at)
+      VALUES (?, ?, ?, ?, 'owner', ?, 1, ?)
+    `).run(userId, orgId, email.toLowerCase().trim(), name, hash, now);
+
+    // 3. Create master API key for the internal app
     await db.prepare(`
       INSERT INTO api_keys (id, org_id, name, key_hash, key_prefix, role, created_at)
       VALUES (?, ?, ?, ?, ?, 'owner', ?)
-    `).run('key_biz_' + now, orgId, 'Master Business Key', keyHash, rawKey.substring(0, 10), now);
-    
-    return { orgId, userId, rawKey };
+    `).run(keyId, orgId, 'Internal Master Key', keyHash, keyPrefix, now);
   })();
 
-  res.status(201).json({
-    success: true,
-    data: { org_id: orgId, admin_email: email, plan_tier },
-    message: 'Business organization provisioned successfully. Default password is changeme123.'
+  logAudit(orgId, req.auth?.key_id || 'admin', 'internal_system_provisioned', 'org', orgId, { name, email });
+  
+  res.status(201).json({ 
+    success: true, 
+    message: 'Internal System provisioned successfully.', 
+    data: { org_id: orgId, raw_key: rawKey }
   });
 });
-
 /**
  * GET /api/admin/billing
  * List all global checkout orders

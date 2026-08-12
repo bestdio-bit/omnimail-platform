@@ -285,9 +285,88 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Initial fetch
+  // Internal Systems Logic
+  async function fetchInternalSystems() {
+    try {
+      const res = await fetch('/api/admin/orgs', { headers });
+      const data = await res.json();
+      if (!data.success) return;
+      
+      const tbody = document.getElementById('internal-systems-table');
+      tbody.innerHTML = '';
+      
+      const internalOrgs = data.data.filter(org => org.plan_tier === 'internal');
+      
+      if (internalOrgs.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px; color:#a0a8c0;">No active internal systems.</td></tr>';
+        return;
+      }
+      
+      internalOrgs.forEach(org => {
+        const date = new Date(org.created_at).toLocaleDateString();
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><code style="color:#a0a8c0">${org.id}</code></td>
+          <td><strong>${org.name}</strong></td>
+          <td><span class="badge" style="background: #1e3a8a; color: #93c5fd; border: 1px solid #3b82f6;">${org.plan_tier}</span></td>
+          <td>${org.custom_send_volume.toLocaleString()}</td>
+          <td>${date}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    } catch (err) {
+      console.error(err);
+      showToast('Error loading internal systems', 'error');
+    }
+  }
+
+  window.provisionInternalSystem = async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('intSysName').value.trim();
+    const email = document.getElementById('intSysEmail').value.trim();
+    
+    try {
+      const res = await fetch('/api/admin/internal-systems', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ name, email })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        showToast('Internal System Provisioned successfully!', 'success');
+        fetchInternalSystems();
+        e.target.reset(); // clear form
+        
+        // Show raw key alert
+        alert(`SUCCESS: Internal System Created!
+
+Organization ID: ${data.data.org_id}
+Master API Key: ${data.data.raw_key}
+
+WARNING: Copy this API key now! It will not be shown again.`);
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (err) {
+      showToast('Error provisioning system', 'error');
+    }
+  };
+
+  // Add fetchInternalSystems to the refresh interval
+  setInterval(() => {
+    fetchStats();
+    fetchOrgs();
+    fetchBilling();
+    fetchEnterpriseRequests();
+    fetchInternalSystems();
+  }, 15000);
+
+  // Initial Fetch
   fetchStats();
   fetchOrgs();
   fetchBilling();
   fetchEnterpriseRequests();
+  fetchInternalSystems();
+
 });

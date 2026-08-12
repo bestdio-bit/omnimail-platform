@@ -337,6 +337,11 @@
       Enterprise Config
     </div>
     
+    <div class="nav-item" data-view="internal-systems" style="color: #93c5fd;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h4l2-9 5 18 3-9h6"></path></svg>
+      Internal Systems
+    </div>
+    
     <div class="sidebar-footer">
       <button class="btn btn-secondary" style="width: 100%; margin-bottom: 8px;" onclick="window.location.href='/'">View Live Site</button>
       <button class="btn" style="width: 100%; background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); box-shadow: none;" onclick="logoutAdmin()">Logout</button>
@@ -360,17 +365,21 @@
         </div>
         <div class="stat-card">
           <div class="stat-label">Total Users</div>
-          <div class="stat-value" id="stat-users">-</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Emails Sent</div>
-          <div class="stat-value" id="stat-sent">-</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Emails Queued</div>
-          <div class="stat-value" id="stat-queued">-</div>
-        </div>
-        <div class="stat-card">
+          <div class="nav-item" onclick="switchAdminTab('users')">
+        <span>Users</span>
+      </div>
+      <div class="nav-item" onclick="switchAdminTab('billing')">
+        <span>Billing & Usage</span>
+      </div>
+      <div class="nav-item" onclick="switchAdminTab('internal')">
+        <span>Internal Systems</span>
+      </div>
+      <div class="nav-item" onclick="switchAdminTab('ent-requests')">
+        <span style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+          Enterprise Requests
+          <span class="badge" style="background: var(--accent-pink); margin-left: 8px;">New</span>
+        </span>
+      </div> class="stat-card">
           <div class="stat-label">Total Orders</div>
           <div class="stat-value" id="stat-orders">-</div>
         </div>
@@ -484,8 +493,46 @@
       </div>
     </div>
 
-    <!-- View: Enterprise Config -->
-    <div id="view-enterprise-config" class="view-section hidden">
+      <!-- Internal Systems Panel -->
+      <section id="panel-internal" style="display: none;">
+        <h2>Provision Internal Systems</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 24px;">Create dedicated accounts for your own apps or partner systems. These bypass billing and come with a 1B email quota.</p>
+        
+        <div style="background: rgba(30, 33, 48, 0.5); padding: 24px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 24px;">
+          <h3>Provision New System</h3>
+          <form onsubmit="provisionInternalSystem(event)" style="margin-top: 16px;">
+            <div class="form-group">
+              <label>System Name</label>
+              <input type="text" id="intSysName" class="form-input" required placeholder="e.g. My Portfolio Notifier">
+            </div>
+            <div class="form-group">
+              <label>System Admin Email</label>
+              <input type="email" id="intSysEmail" class="form-input" required placeholder="system@internal.local">
+            </div>
+            <button type="submit" class="btn">Provision System & Generate Key</button>
+          </form>
+        </div>
+
+        <h3>Active Internal Systems</h3>
+        <div style="overflow-x: auto; margin-top: 16px;">
+          <table id="internal-systems-table">
+            <thead>
+              <tr>
+                <th>System ID</th>
+                <th>Name</th>
+                <th>Limit</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="4" style="text-align: center;">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Enterprise Settings (Existing) -->
+      <section id="panel-ent-config" style="display: none;"> hidden">
       <div class="section-header">
         <h2>Enterprise Client Customization</h2>
         <p>Fully customize the system limits, plan tiers, and infrastructure for an Enterprise Organization.</p>
@@ -530,8 +577,51 @@
       </div>
     </div>
 
+    <!-- View: Internal Systems -->
+    <div id="view-internal-systems" class="view-section hidden">
+      <div class="section-header">
+        <h2>Provision Internal Systems</h2>
+        <p>Create dedicated accounts for your own apps or partner systems. These bypass billing and come with a 1B email quota.</p>
+      </div>
+
+      <div style="background: rgba(30, 33, 48, 0.5); padding: 24px; border-radius: 8px; border: 1px solid #252940; margin-bottom: 24px;">
+        <h3 style="margin-bottom: 16px; color: #fff;">Provision New System</h3>
+        <form onsubmit="provisionInternalSystem(event)">
+          <div class="form-group">
+            <label>System Name</label>
+            <input type="text" id="intSysName" class="form-input" required placeholder="e.g. My Portfolio Notifier">
+          </div>
+          <div class="form-group">
+            <label>System Admin Email</label>
+            <input type="email" id="intSysEmail" class="form-input" required placeholder="system@internal.local">
+          </div>
+          <button type="submit" class="btn">Provision System & Generate Key</button>
+        </form>
+      </div>
+
+      <div class="table-card">
+        <div style="padding: 16px 24px; border-bottom: 1px solid #252940;">
+          <h3 style="margin: 0; color: #fff; font-size: 1rem;">Active Internal Systems</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>System ID</th>
+              <th>Name</th>
+              <th>Tier</th>
+              <th>Limit</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody id="internal-systems-table">
+            <tr><td colspan="5" style="text-align: center;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </main>
-  </div> <!-- End App Container -->
+</div> <!-- End App Container -->
 
 
 
