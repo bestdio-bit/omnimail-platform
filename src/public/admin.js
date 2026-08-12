@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.completeEnterpriseRequest = async (id) => {
     try {
-      const res = await fetch(\`/api/admin/enterprise-requests/\${id}/complete\`, { method: 'PUT', headers });
+      const res = await fetch(`/api/admin/enterprise-requests/${id}/complete`, { method: 'PUT', headers });
       const data = await res.json();
       if (data.success) {
         showToast('Request marked as complete', 'success');
