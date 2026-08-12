@@ -1,4 +1,16 @@
 // OmniMail Frontend SPA Logic
+
+// Impersonation Check: If URL has ?impersonate=, set it as session token
+(function checkImpersonation() {
+  const params = new URLSearchParams(window.location.search);
+  const impToken = params.get('impersonate');
+  if (impToken) {
+    localStorage.setItem('omni_session_token', impToken);
+    // Clean up URL without refreshing
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+})();
+
 let currentTab = 'overview';
 
 // Helper: fetch API with Bearer token (Session or Scoped Key)

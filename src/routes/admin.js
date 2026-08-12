@@ -115,11 +115,12 @@ router.post('/orgs', async (req, res) => {
  * Provision a new internal app bypassing all billing
  */
 router.post('/internal-systems', async (req, res) => {
-  const { name, email } = req.body;
+  const { name, email, volume_limit } = req.body;
   if (!name || !email) {
     return res.status(400).json({ success: false, error: 'missing_fields', message: 'Name and email are required.' });
   }
 
+  const limit = volume_limit || 1000000000;
   const now = Date.now();
   const orgId = 'org_int_' + now + '_' + Math.random().toString(36).substring(2, 6);
   const userId = 'usr_int_' + now + '_' + Math.random().toString(36).substring(2, 6);
@@ -132,11 +133,11 @@ router.post('/internal-systems', async (req, res) => {
   const keyPrefix = rawKey.substring(0, 14);
   
   await db.transaction(async () => {
-    // 1. Create org (Internal tier, 1 billion volume)
+    // 1. Create org (Internal tier, custom volume)
     await db.prepare(`
       INSERT INTO orgs (id, name, plan_tier, custom_send_volume, onboarding_step, created_at)
-      VALUES (?, ?, 'internal', 1000000000, 'completed', ?)
-    `).run(orgId, name, now);
+      VALUES (?, ?, 'internal', ?, 'completed', ?)
+    `).run(orgId, name, limit, now);
 
     // 2. Create user
     const salt = 'omni_salt_' + email.toLowerCase().trim();
@@ -161,6 +162,41 @@ router.post('/internal-systems', async (req, res) => {
     data: { org_id: orgId, raw_key: rawKey }
   });
 });
+
+/**
+ * POST /api/admin/impersonate/:orgId
+ * Generates a session token for an org's owner user
+ */
+router.post('/impersonate/:orgId', async (req, res) => {
+  const orgId = req.params.orgId;
+  const org = await db.prepare('SELECT id FROM orgs WHERE id = ?').get(orgId);
+  
+  if (!org) {
+    return res.status(404).json({ success: false, message: 'Organization not found.' });
+  }
+
+  // Find the owner user of this org
+  const owner = await db.prepare("SELECT id FROM users WHERE org_id = ? AND role = 'owner' LIMIT 1").get(orgId);
+  
+  if (!owner) {
+    return res.status(404).json({ success: false, message: 'No owner found for this organization.' });
+  }
+
+  const now = Date.now();
+  const sessionId = 'ses_imp_' + now + '_' + Math.random().toString(36).substring(2, 6);
+  const sessionToken = 'tok_session_' + crypto.randomBytes(32).toString('hex');
+  const expiresAt = now + 12 * 60 * 60 * 1000; // 12 hour session
+
+  await db.prepare(`
+    INSERT INTO sessions (id, user_id, org_id, token, expires_at, created_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `).run(sessionId, owner.id, org.id, sessionToken, expiresAt, now);
+
+  logAudit(orgId, req.auth?.key_id || 'admin', 'admin_impersonation', 'user', owner.id);
+
+  res.json({ success: true, token: sessionToken });
+});
+
 /**
  * GET /api/admin/billing
  * List all global checkout orders

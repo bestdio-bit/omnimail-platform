@@ -591,6 +591,10 @@
             <label>System Admin Email</label>
             <input type="email" id="intSysEmail" class="form-input" required placeholder="system@internal.local">
           </div>
+          <div class="form-group">
+            <label>Monthly Volume Limit</label>
+            <input type="number" id="intSysLimit" class="form-input" required value="1000000000" min="1">
+          </div>
           <button type="submit" class="btn">Provision System & Generate Key</button>
         </form>
       </div>
@@ -607,10 +611,11 @@
               <th>Tier</th>
               <th>Limit</th>
               <th>Created</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="internal-systems-table">
-            <tr><td colspan="5" style="text-align: center;">Loading...</td></tr>
+            <tr><td colspan="6" style="text-align: center;">Loading...</td></tr>
           </tbody>
         </table>
       </div>

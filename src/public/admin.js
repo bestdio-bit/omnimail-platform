@@ -311,6 +311,10 @@ document.addEventListener('DOMContentLoaded', () => {
           <td><span class="badge" style="background: #1e3a8a; color: #93c5fd; border: 1px solid #3b82f6;">${org.plan_tier}</span></td>
           <td>${org.custom_send_volume.toLocaleString()}</td>
           <td>${date}</td>
+          <td>
+            <button class="btn" style="padding:6px 12px; font-size:12px; background: rgba(255,255,255,0.1); box-shadow: none;" onclick="editOrg('${org.id}')">Edit Limit</button>
+            <button class="btn" style="padding:6px 12px; font-size:12px; margin-left: 8px;" onclick="impersonateOrg('${org.id}')">Login as System</button>
+          </td>
         `;
         tbody.appendChild(tr);
       });
@@ -324,12 +328,13 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const name = document.getElementById('intSysName').value.trim();
     const email = document.getElementById('intSysEmail').value.trim();
+    const limit = parseInt(document.getElementById('intSysLimit').value, 10);
     
     try {
       const res = await fetch('/api/admin/internal-systems', {
         method: 'POST',
         headers,
-        body: JSON.stringify({ name, email })
+        body: JSON.stringify({ name, email, volume_limit: limit })
       });
       const data = await res.json();
       
@@ -350,6 +355,25 @@ WARNING: Copy this API key now! It will not be shown again.`);
       }
     } catch (err) {
       showToast('Error provisioning system', 'error');
+    }
+  };
+
+  window.impersonateOrg = async (orgId) => {
+    try {
+      showToast('Generating secure session...', 'info');
+      const res = await fetch(`/api/admin/impersonate/${orgId}`, { method: 'POST', headers });
+      const data = await res.json();
+      
+      if (data.success) {
+        showToast('Login successful! Opening dashboard...', 'success');
+        // Open dashboard in new tab with impersonation token in URL
+        window.open(`/?impersonate=${data.token}`, '_blank');
+      } else {
+        showToast(data.message, 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Failed to impersonate system', 'error');
     }
   };
 
