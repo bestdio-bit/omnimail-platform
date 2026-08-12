@@ -8,14 +8,18 @@ const { requireSuperAdmin, logAudit } = require('../middleware/rbac');
 // Admin routes accept two auth methods:
 // 1. tok_admin_ tokens (from /api/admin-auth/login) — skip authenticateKey
 // 2. Regular user session tokens — go through authenticateKey first
-router.use((req, res, next) => {
+router.use(async (req, res, next) => {
   const authHeader = req.headers.authorization;
   if (authHeader && authHeader.startsWith('Bearer tok_admin_')) {
     // Skip authenticateKey, go straight to requireSuperAdmin
     return next();
   }
   // Otherwise, run normal user auth first
-  authenticateKey(req, res, next);
+  try {
+    await authenticateKey(req, res, next);
+  } catch (err) {
+    next(err);
+  }
 });
 router.use(requireSuperAdmin);
 
@@ -106,8 +110,13 @@ router.post('/orgs', async (req, res) => {
  * List all global checkout orders
  */
 router.get('/billing', async (req, res) => {
-  const orders = await db.prepare('SELECT * FROM checkout_orders ORDER BY created_at DESC').all();
-  res.json({ success: true, data: orders });
+  try {
+    const orders = await db.prepare('SELECT * FROM checkout_orders ORDER BY created_at DESC').all();
+    res.json({ success: true, data: orders });
+  } catch (err) {
+    console.error('Error fetching billing orders:', err);
+    res.status(500).json({ success: false, message: 'Failed to load billing orders.' });
+  }
 });
 
 /**

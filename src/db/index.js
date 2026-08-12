@@ -140,6 +140,18 @@ async function initDb() {
         created_at BIGINT NOT NULL
       );
 
+      CREATE TABLE IF NOT EXISTS checkout_orders (
+        id TEXT PRIMARY KEY,
+        org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
+        order_id TEXT NOT NULL,
+        amount REAL NOT NULL,
+        currency TEXT DEFAULT 'USD',
+        status TEXT DEFAULT 'PENDING',
+        payment_token TEXT,
+        created_at BIGINT NOT NULL,
+        updated_at BIGINT NOT NULL
+      );
+
       CREATE TABLE IF NOT EXISTS domains (
         id TEXT PRIMARY KEY,
         org_id TEXT NOT NULL REFERENCES orgs(id) ON DELETE CASCADE,
